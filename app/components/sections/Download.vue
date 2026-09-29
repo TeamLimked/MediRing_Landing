@@ -1,79 +1,76 @@
 <template>
-  <section id="download" class="section section--night download">
-    <div class="download__rings" aria-hidden="true">
-      <span v-for="n in 4" :key="n" :style="{ '--i': n }" />
+  <section id="download" class="dl" aria-labelledby="dl-title">
+    <div class="dl__bg" aria-hidden="true">
+      <span class="dl__ring" />
+      <span class="dl__ring dl__ring--2" />
     </div>
-    <div class="container download__inner">
-      <div v-reveal class="reveal">
-        <AppLogo :size="44" class="download__logo" />
-        <h2 class="download__title">오늘부터, 안전하게<br />나에게 맞는 영양을.</h2>
-        <p class="lead">3분이면 첫 추천을 받아볼 수 있어요. 가입과 기본 기능은 무료예요.</p>
-        <StoreButtons class="download__stores" />
-      </div>
+    <div class="container dl__inner">
+      <p class="eyebrow">Get started</p>
+      <h2 id="dl-title" class="display dl__title" v-split data-split>메디링과 함께<br />오늘의 영양을 시작하세요.</h2>
+      <p class="lead dl__lead">3분이면 첫 추천을 받아볼 수 있어요. 가입과 핵심 기능은 무료예요.</p>
+      <StoreButtons class="dl__stores" />
+      <p class="dl__note">만 19세 이상 성인 대상 · 의료 진단·치료를 대체하지 않습니다</p>
     </div>
   </section>
 </template>
 
 <style scoped>
-.download {
-  overflow: hidden;
-  text-align: center;
-  background: radial-gradient(60% 80% at 50% 110%, rgba(52, 217, 160, 0.25), transparent 70%), var(--night);
-}
-.download__inner {
+.dl {
   position: relative;
-  display: flex;
-  justify-content: center;
+  overflow: hidden;
+  padding: clamp(140px, 16vw, 240px) 0;
+  text-align: center;
+  background: #02030d;
 }
-.download__logo {
-  justify-content: center;
-  color: var(--night-ink);
-}
-.download__logo :deep(.logo__word) {
-  font-size: 30px;
-}
-.download__title {
-  margin-top: 32px;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(36px, 5.5vw, 64px);
-  line-height: 1.18;
-}
-.download .lead {
-  max-width: 520px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.download__stores {
-  justify-content: center;
-  margin-top: 40px;
-}
-.download__rings {
+.dl__bg {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  pointer-events: none;
+  background: radial-gradient(50% 60% at 50% 50%, rgba(58, 214, 212, 0.14), transparent 70%);
 }
-.download__rings span {
+/* 흐릿한 대형 링(MediRing) */
+.dl__ring {
   grid-area: 1 / 1;
-  width: calc(280px * var(--i));
+  width: min(1100px, 130vw);
   aspect-ratio: 1;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(52, 217, 160, calc(0.22 - var(--i) * 0.04));
-  animation: ripple 5s calc(var(--i) * -1.25s) infinite ease-out;
+  background: conic-gradient(from 0deg, transparent, rgba(58, 214, 212, 0.55), rgba(143, 184, 255, 0.35), transparent 60%);
+  mask: radial-gradient(closest-side, transparent 86%, #000 88%, #000 92%, transparent 94%);
+  -webkit-mask: radial-gradient(closest-side, transparent 86%, #000 88%, #000 92%, transparent 94%);
+  filter: blur(6px);
+  animation: spin 18s linear infinite;
 }
-@keyframes ripple {
-  0% {
-    transform: scale(0.85);
-    opacity: 0;
+.dl__ring--2 {
+  width: min(760px, 95vw);
+  opacity: 0.6;
+  animation-duration: 26s;
+  animation-direction: reverse;
+}
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
   }
-  30% {
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.15);
-    opacity: 0;
-  }
+}
+.dl__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dl__title {
+  margin-top: 22px;
+}
+.dl__lead {
+  margin-top: 22px;
+}
+.dl__stores {
+  justify-content: center;
+  margin-top: clamp(36px, 4vw, 56px);
+}
+.dl__note {
+  margin-top: 28px;
+  font-size: 13px;
+  color: var(--faint);
 }
 </style>

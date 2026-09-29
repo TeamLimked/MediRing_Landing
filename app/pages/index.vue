@@ -1,14 +1,12 @@
 <template>
   <div>
     <SectionsHero />
-    <SectionsStats />
-    <SectionsHowItWorks />
-    <SectionsSafetyDemo />
+    <SectionsStory />
     <SectionsFeatures />
-    <SectionsGarden />
-    <SectionsPrivacy />
-    <SectionsPlans />
+    <SectionsSafetyDemo />
+    <SectionsNumbers />
     <SectionsFaq />
+    <SectionsLinkCards />
     <SectionsDownload />
   </div>
 </template>
