@@ -17,9 +17,22 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       siteUrl: 'https://mediring.io',
-      webBaseUrl: 'https://mediring.io',
       appStoreUrl: '',
       playStoreUrl: '',
+      // 약관·정책 페이지에 표시(NUXT_PUBLIC_COMPANY_*). 빈 값은 백엔드와 같은 자리표시자로 채운다 — data/legal.ts
+      company: {
+        name: 'TeamLimked',
+        representative: '',
+        businessNumber: '',
+        address: '',
+        privacyOfficer: '',
+        privacyEmail: 'privacy@mediring.io',
+        supportEmail: 'support@mediring.io',
+        // 백엔드 UserConsent::POLICY_VERSION 과 같은 값이어야 한다(앱 동의 버전 = 시행일)
+        policyVersion: '2026-09-28',
+        // 법무 확정 후 false(NUXT_PUBLIC_COMPANY_LEGAL_DRAFT=false) — 백엔드 LEGAL_DRAFT_BANNER 와 함께 바꾼다
+        legalDraft: true,
+      },
     },
   },
 
@@ -55,7 +68,9 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    prerender: { routes: ['/'] },
+    prerender: {
+      routes: ['/', '/support', ...['terms', 'privacy', 'sensitive', 'overseas', 'marketing', 'medical', 'affiliate'].map((d) => `/legal/${d}`)],
+    },
   },
 
   vite: {

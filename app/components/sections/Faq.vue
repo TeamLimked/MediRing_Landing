@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { faqs } from '~/data/content'
+
+const { company } = useSiteLinks()
 </script>
 
 <template>
@@ -8,7 +10,7 @@ import { faqs } from '~/data/content'
       <header v-reveal class="reveal">
         <p class="eyebrow">자주 묻는 질문</p>
         <h2 class="h2">궁금한 점이<br />있으신가요?</h2>
-        <p class="lead">더 궁금한 점은 <a class="faq__link" href="mailto:support@mediring.io">support@mediring.io</a>로 보내 주세요.</p>
+        <p class="lead">더 궁금한 점은 <a class="faq__link" :href="`mailto:${company.supportEmail}`">{{ company.supportEmail }}</a>로 보내 주세요.</p>
       </header>
 
       <div class="faq__list">

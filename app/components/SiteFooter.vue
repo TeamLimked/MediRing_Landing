@@ -1,14 +1,10 @@
 <script setup lang="ts">
 const links = useSiteLinks()
+const c = links.company
 const year = new Date().getFullYear()
 const legal = [
-  { label: '이용약관', href: links.legal('terms') },
-  { label: '개인정보처리방침', href: links.legal('privacy'), strong: true },
-  { label: '민감정보 처리 안내', href: links.legal('sensitive') },
-  { label: '국외이전 안내', href: links.legal('overseas') },
-  { label: '의료 면책', href: links.legal('medical') },
-  { label: '제휴 고지', href: links.legal('affiliate') },
-  { label: '고객지원', href: links.support },
+  ...links.docs.map((d) => ({ label: d.nav, to: links.legal(d.slug), strong: d.slug === 'privacy' })),
+  { label: '고객지원', to: links.support, strong: false },
 ]
 </script>
 
@@ -18,7 +14,7 @@ const legal = [
       <div class="footer__top">
         <AppLogo />
         <nav class="footer__links" aria-label="약관 및 정책">
-          <a v-for="l in legal" :key="l.label" :href="l.href" :class="{ strong: l.strong }">{{ l.label }}</a>
+          <NuxtLink v-for="l in legal" :key="l.label" :to="l.to" :class="{ strong: l.strong }">{{ l.label }}</NuxtLink>
         </nav>
       </div>
 
@@ -33,9 +29,14 @@ const legal = [
         </p>
       </div>
 
+      <p class="footer__company">
+        {{ c.name }} · 대표 {{ c.representative }} · 사업자등록번호 {{ c.businessNumber }} · {{ c.address }} · 개인정보 보호책임자
+        {{ c.privacyOfficer }}
+      </p>
+
       <div class="footer__bottom">
-        <p>© {{ year }} TeamLimked. All rights reserved.</p>
-        <p>문의 · <a href="mailto:support@mediring.io">support@mediring.io</a></p>
+        <p>© {{ year }} {{ c.name }}. All rights reserved.</p>
+        <p>문의 · <a :href="`mailto:${c.supportEmail}`">{{ c.supportEmail }}</a></p>
       </div>
     </div>
   </footer>
@@ -81,6 +82,11 @@ const legal = [
   border-bottom: 1px solid var(--night-line);
   font-size: 13px;
   line-height: 1.75;
+}
+.footer__company {
+  margin-top: 20px;
+  font-size: 12.5px;
+  line-height: 1.7;
 }
 .footer__bottom {
   display: flex;

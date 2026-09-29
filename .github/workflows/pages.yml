@@ -41,6 +41,16 @@ jobs:
           NUXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
           NUXT_PUBLIC_APP_STORE_URL: ${{ vars.APP_STORE_URL }}
           NUXT_PUBLIC_PLAY_STORE_URL: ${{ vars.PLAY_STORE_URL }}
+          # 약관·정책의 회사 정보 — 비어 있으면 자리표시자로 표시(data/legal.ts)
+          NUXT_PUBLIC_COMPANY_NAME: ${{ vars.COMPANY_NAME }}
+          NUXT_PUBLIC_COMPANY_REPRESENTATIVE: ${{ vars.COMPANY_REPRESENTATIVE }}
+          NUXT_PUBLIC_COMPANY_BUSINESS_NUMBER: ${{ vars.COMPANY_BUSINESS_NUMBER }}
+          NUXT_PUBLIC_COMPANY_ADDRESS: ${{ vars.COMPANY_ADDRESS }}
+          NUXT_PUBLIC_COMPANY_PRIVACY_OFFICER: ${{ vars.PRIVACY_OFFICER_NAME }}
+          NUXT_PUBLIC_COMPANY_PRIVACY_EMAIL: ${{ vars.PRIVACY_OFFICER_EMAIL }}
+          NUXT_PUBLIC_COMPANY_SUPPORT_EMAIL: ${{ vars.SUPPORT_EMAIL }}
+          NUXT_PUBLIC_COMPANY_POLICY_VERSION: ${{ vars.POLICY_VERSION }}
+          NUXT_PUBLIC_COMPANY_LEGAL_DRAFT: ${{ vars.LEGAL_DRAFT_BANNER || 'true' }}
 
       - run: touch .output/public/.nojekyll
 
