@@ -1,4 +1,4 @@
-# MediRing Landing (Nuxt 4 · three.js)
+# MediRing Landing (Nuxt 4 · three.js · GSAP)
 
 MediRing 홍보용 랜딩 페이지. 정적 사이트로 생성(`nuxt generate`)해 어떤 정적 호스팅에도 올릴 수 있다.
 
@@ -44,33 +44,46 @@ npm run typecheck
 app/
   app.vue                     # 헤더 · <NuxtPage> · 푸터
   pages/                      # index(랜딩) · legal/[doc] · support
-  router.options.ts           # 다른 페이지에서 /#섹션 이동 시 스크롤 처리
-  lib/hero-scene.ts           # three.js 히어로 장면(동적 import — 메인 번들과 분리)
+  router.options.ts           # /#섹션 이동(Lenis 사용 시 Lenis 로 스크롤)
+  plugins/
+    motion.client.ts          # GSAP(ScrollTrigger·SplitText) 등록, Lenis 부드러운 스크롤, v-split 디렉티브
+    split.server.ts           # 프리렌더용 v-split 빈 디렉티브
+    reveal.ts                 # v-reveal 스크롤 등장
+  lib/
+    hero-scene.ts             # 히어로 3D(유리 링·ECG·궤도 알약·입자)
+    who-scene.ts              # Who → Principles 배경 3D(와이어프레임 지형·캡슐·링 → 입자 파도)
   components/
-    HeroScene.vue             # 장면 호스트(<ClientOnly> 안에서만 사용)
-    sections/                 # Hero · Stats · HowItWorks · SafetyDemo · Features · Garden · Privacy · Plans · Faq · Download
+    sections/                 # Hero · Story(Who+Principles) · Features · SafetyDemo · Numbers · Faq · LinkCards · Download
+    PrincipleCards.vue        # 펼쳐지는 원칙 카드
+    FeatureVisual.vue         # 기능 슬라이드 비주얼(CSS 로 그린 UI)
     LegalPage.vue             # 약관·정책 공통 레이아웃
-    PhoneMockup.vue StoreButtons.vue SiteHeader.vue SiteFooter.vue AppLogo.vue
+    SiteHeader.vue            # 메가 메뉴 헤더(스크롤 방향에 따라 숨김)
+    SiteFooter.vue StoreButtons.vue AppLogo.vue HeroScene.vue
   data/content.ts             # 랜딩 문구·데이터
   data/legal.ts               # 약관·정책 문서(백엔드 원문 사본)
-  plugins/reveal.ts           # v-reveal 스크롤 등장
-  assets/css/main.css         # 디자인 토큰(앱 theme.ts 의 "Fresh Citrus" 팔레트)
+  assets/css/main.css         # 디자인 토큰(딥 네이비 + 시안), 괄호 버튼 등 공통 스타일
 ```
+
+## 디자인·모션
+- 시네마틱 다크 톤(딥 네이비 + 시안), SUIT 서체, 모서리 괄호 버튼. 레이아웃·인터랙션은 방산 기업 사이트(welcrondefense.com) 구성을 참고했고
+  이미지·영상·문구는 쓰지 않았다 — 영상·사진 자리는 three.js 장면과 CSS 비주얼로 대체.
+- Who we are 는 스크롤 고정(sticky) 구간: 진행도(ScrollTrigger scrub)에 따라 와이어프레임 → 입자 파도로 전환되고, 같은 캔버스가 Principles 뒤까지 이어진다.
+- GSAP 은 3.13 부터 SplitText 등 모든 플러그인이 무료(Standard 'no charge' 라이선스)다.
+- `prefers-reduced-motion` 이면 Lenis·스크롤 고정·텍스트 분할·자동 슬라이드를 끄고 최종 상태를 바로 보여준다.
 
 ## 히어로 3D
 - 유리 링(MeshPhysicalMaterial 투과·무지갯빛) + 링 코어의 심박 발광 + 링 둘레를 도는 ECG 파형
 - 앱의 영양소 색으로 칠한 캡슐·연질캡슐·정제가 세 궤도면을 돌고, 입자 필드는 커스텀 셰이더로 반짝임
-- 마우스 기울기·스크롤 연동, 등장 애니메이션
-- 성능: 화면 밖·탭 숨김이면 렌더 정지, DPR 상한(저사양 1.5), 저사양·소형 화면은 입자·분할 수 축소, 언마운트 시 전부 dispose
-- `prefers-reduced-motion` 이면 정지된 한 프레임만 그림. WebGL 불가 시 CSS 그라데이션 포스터만 남음
-- `HeroScene` 을 `.client.vue` 로 바꾸지 말 것 — 하이드레이션 중 `onMounted` 시점에 ref 가 비어 장면이 시작되지 않는다
+- 성능: 화면 밖·탭 숨김이면 렌더 정지, DPR 상한(저사양 1.5), 저사양·소형 화면은 입자·분할 수 축소, 언마운트 시 전부 dispose.
+  WebGL 불가 시 CSS 그라데이션 포스터만 남음
+- `HeroScene` 을 `.client.vue` 로 바꾸지 말 것 — 하이드레이션 중 `onMounted` 시점에 ref 가 비어 장면이 시작되지 않는다(`<ClientOnly>` 로 감싼다)
 
 ## 문구 원칙
 `MediRing_Interface/docs/compliance.md` 를 따른다.
 - 치료·완치·예방·진단·처방 등 의료 효능 표현 금지, "위험도" 대신 "주의"
-- 수치는 백엔드·앱 코드/문서에 근거가 있는 것만(예: 안전 규칙 56개 → "50+", 공공 품목 약 4.6만 건, KDRI 372행 검증)
+- 수치는 백엔드·앱 코드/문서에 근거가 있는 것만(예: 안전 규칙 56개 → "50+", 공공 품목 약 4.6만 건 → "약 4.6만", KDRI 372행 검증)
 - 안전 점검 데모의 규칙·문구는 `MediRing_Interface/db/reference/safety_rules.yml` 에서 그대로 가져옴 — 원본이 바뀌면 `data/content.ts` 도 맞춘다
-- 정원 슬라이더는 앱 `src/lib/garden.tsx` 규칙(시작 55 XP, 루틴 +20, 돌보기 +15, 단계 임계값)과 같다
+- 최상급·효능 단정 표현("가장 안전한" 등)을 쓰지 않는다. 기능 슬라이드 비주얼의 안전 규칙 항목도 실제 규칙 데이터 기준
 - 가격은 스토어 결제 화면 기준이라 랜딩에 적지 않는다
 
 ## 배포 시 주의 — 백엔드 공개 웹과 같은 호스트
