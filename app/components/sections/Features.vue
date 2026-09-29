@@ -1,128 +1,290 @@
 <script setup lang="ts">
-import { features } from '~/data/content'
+// What we do — 왼쪽 괄호 탭 목록 + 오른쪽 큰 슬라이더(하위 탭·캡션·진행 바, 자동 넘김)
+import { featureTabs } from '~/data/content'
 
-const ICONS: Record<string, string> = {
-  recommend: 'M9 3h6M10 3v5l-5 9a2.5 2.5 0 0 0 2.2 3.7h9.6A2.5 2.5 0 0 0 19 17l-5-9V3M7.5 14h9',
-  intake: 'M4 12.5 9 17.5 20 6.5',
-  coach: 'M12 3v2M12 19v2M3 12h2M19 12h2M6 6l1.4 1.4M16.6 16.6 18 18M6 18l1.4-1.4M16.6 7.4 18 6M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
-  catalog: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5zM4 19a2 2 0 0 1 2-2h13M9 7h6',
-  reminder: 'M6 16V11a6 6 0 1 1 12 0v5l2 2H4l2-2zM10 21h4',
-  share: 'M16 6a3 3 0 1 0 0-.01M8 12a3 3 0 1 0 0-.01M16 18a3 3 0 1 0 0-.01M10.6 13.5l2.8 2M13.4 8.5l-2.8 2',
+const SLIDE_MS = 6000
+const tab = ref(0)
+const slide = ref(0)
+const progress = ref(0)
+const paused = ref(false)
+const inView = ref(false)
+
+const current = computed(() => featureTabs[tab.value]!)
+const currentSlide = computed(() => current.value.slides[slide.value]!)
+
+function select(t: number, s = 0) {
+  tab.value = t
+  slide.value = s
+  progress.value = 0
 }
+function next() {
+  if (slide.value < current.value.slides.length - 1) select(tab.value, slide.value + 1)
+  else select((tab.value + 1) % featureTabs.length, 0)
+}
+
+const root = ref<HTMLElement | null>(null)
+let raf = 0
+let last = 0
+let io: IntersectionObserver | null = null
+const reduced = ref(false)
+
+function loop(now: number) {
+  const dt = last ? now - last : 0
+  last = now
+  if (!paused.value && inView.value && !reduced.value) {
+    progress.value += dt / SLIDE_MS
+    if (progress.value >= 1) next()
+  }
+  raf = requestAnimationFrame(loop)
+}
+
+onMounted(() => {
+  reduced.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  io = new IntersectionObserver((entries) => (inView.value = entries.some((e) => e.isIntersecting)), { threshold: 0.35 })
+  if (root.value) io.observe(root.value)
+  raf = requestAnimationFrame(loop)
+})
+onBeforeUnmount(() => {
+  cancelAnimationFrame(raf)
+  io?.disconnect()
+})
 </script>
 
 <template>
-  <section id="features" class="section features">
-    <div class="container">
-      <header v-reveal class="reveal section-head section-head--center">
-        <p class="eyebrow">주요 기능</p>
-        <h2 class="h2">추천에서 끝나지 않고,<br /><em>매일의 루틴</em>까지</h2>
-        <p class="lead">고르는 순간보다 꾸준히 챙기는 매일이 더 중요하니까요. 필요한 기능만 담았어요.</p>
-      </header>
+  <section id="features" ref="root" class="section what" aria-labelledby="what-title">
+    <div class="container what__grid">
+      <div class="what__side">
+        <p class="eyebrow">What we do</p>
+        <Transition name="swap" mode="out-in">
+          <h2 id="what-title" :key="current.key" class="what__title">{{ current.label }}</h2>
+        </Transition>
 
-      <div class="bento">
-        <div v-reveal class="reveal bento__phone">
-          <div class="bento__phone-bg" aria-hidden="true" />
-          <PhoneMockup />
-          <p class="bento__caption">앱 화면은 예시이며 실제와 다를 수 있어요.</p>
+        <div class="what__tabs" role="tablist" aria-label="기능 분류">
+          <button
+            v-for="(t, i) in featureTabs"
+            :key="t.key"
+            type="button"
+            role="tab"
+            class="what__tab"
+            :class="{ on: tab === i }"
+            :aria-selected="tab === i"
+            aria-controls="what-panel"
+            @click="select(i)"
+          >
+            {{ t.label }}
+            <span class="what__dot" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+
+      <div
+        id="what-panel"
+        class="what__panel"
+        role="tabpanel"
+        :aria-label="`${current.label} · ${currentSlide.label}`"
+        @mouseenter="paused = true"
+        @mouseleave="paused = false"
+        @focusin="paused = true"
+        @focusout="paused = false"
+      >
+        <Transition name="fade">
+          <FeatureVisual :key="currentSlide.kind" :kind="currentSlide.kind" />
+        </Transition>
+        <div class="what__shade" aria-hidden="true" />
+
+        <div class="what__subs">
+          <button
+            v-for="(s, i) in current.slides"
+            :key="s.kind"
+            type="button"
+            :class="{ on: slide === i }"
+            :aria-pressed="slide === i"
+            @click="select(tab, i)"
+          >
+            {{ s.label }}
+          </button>
         </div>
 
-        <ul class="bento__grid">
-          <li v-for="(f, i) in features" :key="f.key" v-reveal="(i % 2) * 90" class="reveal card feat" :style="{ '--feat': f.accent }">
-            <span class="feat__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path :d="ICONS[f.key]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-            </span>
-            <h3 class="feat__title">{{ f.title }}</h3>
-            <p class="feat__body">{{ f.body }}</p>
-          </li>
-        </ul>
+        <NuxtLink :to="currentSlide.to" class="arrow-link what__caption">
+          <Transition name="swap" mode="out-in">
+            <span :key="currentSlide.caption">{{ currentSlide.caption }}</span>
+          </Transition>
+          <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </NuxtLink>
+
+        <div class="what__progress" aria-hidden="true">
+          <span :style="{ transform: `scaleX(${reduced ? 1 : progress})` }" />
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <style scoped>
-.bento {
+.what {
+  background: #02030d;
+}
+.what__grid {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: 20px;
+  grid-template-columns: minmax(220px, 3fr) minmax(0, 9fr);
+  gap: clamp(24px, 3vw, 56px);
   align-items: stretch;
 }
-.bento__phone {
-  position: relative;
+.what__side {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  padding: 48px 24px 28px;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  background: var(--night-2);
 }
-.bento__phone-bg {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(60% 45% at 50% 40%, rgba(52, 217, 160, 0.35), transparent 70%),
-    radial-gradient(40% 30% at 80% 85%, rgba(255, 138, 61, 0.25), transparent 70%);
-}
-.bento__phone > :deep(.phone) {
-  position: relative;
-}
-.bento__caption {
-  position: relative;
-  font-size: 12.5px;
-  color: var(--night-muted);
-}
-.bento__grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.feat {
-  padding: 28px 26px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.feat:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 1px 2px rgba(14, 42, 32, 0.04), 0 24px 48px -20px rgba(14, 42, 32, 0.25);
-}
-.feat__icon {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--feat) 14%, white);
-  color: color-mix(in srgb, var(--feat) 80%, black);
-}
-.feat__icon svg {
-  width: 24px;
-  height: 24px;
-}
-.feat__title {
-  margin-top: 20px;
-  font-size: 19px;
+.what__title {
+  margin-top: 22px;
+  font-size: clamp(34px, 3vw, 56px);
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
 }
-.feat__body {
-  margin-top: 10px;
+/* 괄호로 감싼 탭 목록 */
+.what__tabs {
+  --b: var(--line-strong);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: min(260px, 100%);
+  margin-top: auto;
+  padding: 12px;
+  background:
+    linear-gradient(var(--b), var(--b)) top left / 10px 1px no-repeat,
+    linear-gradient(var(--b), var(--b)) top left / 1px 10px no-repeat,
+    linear-gradient(var(--b), var(--b)) top right / 10px 1px no-repeat,
+    linear-gradient(var(--b), var(--b)) top right / 1px 10px no-repeat,
+    linear-gradient(var(--b), var(--b)) bottom left / 10px 1px no-repeat,
+    linear-gradient(var(--b), var(--b)) bottom left / 1px 10px no-repeat,
+    linear-gradient(var(--b), var(--b)) bottom right / 10px 1px no-repeat,
+    linear-gradient(var(--b), var(--b)) bottom right / 1px 10px no-repeat;
+}
+.what__tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 18px;
+  border: 0;
+  background: rgba(16, 23, 47, 0.8);
   font-size: 15px;
-  color: var(--muted);
+  font-weight: 700;
+  text-align: left;
+  transition: background-color 0.3s, color 0.3s;
+}
+.what__tab:hover {
+  background: rgba(26, 36, 70, 0.9);
+}
+.what__tab.on {
+  background: var(--accent);
+  color: #03121a;
+}
+.what__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px currentColor;
+}
+.what__tab.on .what__dot {
+  background: currentColor;
 }
 
-@media (max-width: 1024px) {
-  .bento {
-    grid-template-columns: 1fr;
-  }
+.what__panel {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #060a18;
 }
-@media (max-width: 640px) {
-  .bento__grid {
-    grid-template-columns: 1fr;
+.what__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgba(2, 3, 13, 0.7) 0%, transparent 30%);
+}
+.what__subs {
+  position: absolute;
+  top: clamp(18px, 2.4vw, 36px);
+  right: clamp(18px, 2.4vw, 36px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.what__subs button {
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--faint);
+  transition: color 0.2s;
+}
+.what__subs button.on {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.what__caption {
+  position: absolute;
+  left: clamp(20px, 2.6vw, 40px);
+  bottom: clamp(28px, 3vw, 48px);
+  font-size: clamp(22px, 2vw, 34px);
+}
+.what__progress {
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  background: rgba(236, 244, 255, 0.12);
+}
+.what__progress span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  box-shadow: 0 0 10px var(--accent);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.7s var(--ease);
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.swap-enter-active,
+.swap-leave-active {
+  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+}
+.swap-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.swap-leave-to {
+  opacity: 0;
+  transform: translateY(-12px);
+}
+
+@media (max-width: 960px) {
+  .what__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .what__tabs {
+    flex-direction: row;
+    width: 100%;
+    margin-top: 28px;
+  }
+  .what__tab {
+    flex: 1;
+    justify-content: center;
+    padding: 0 8px;
+    font-size: 14px;
+  }
+  .what__dot {
+    display: none;
+  }
+  .what__panel {
+    aspect-ratio: 3 / 4;
   }
 }
 </style>
