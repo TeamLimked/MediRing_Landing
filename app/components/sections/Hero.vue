@@ -1,118 +1,98 @@
-<template>
-  <section id="top" class="mv">
-    <div class="mv__poster" aria-hidden="true" />
-    <ClientOnly><HeroScene /></ClientOnly>
-    <div class="mv__shade" aria-hidden="true" />
+<script setup lang="ts">
+import { sources } from '~/data/content'
+</script>
 
-    <div class="mv__content">
-      <h1 class="mv__title" v-split="{ immediate: true, delay: 0.25 }" data-split>
-        안전을 넘어,<br class="mv__br" /> 나에게 꼭 맞는 영양으로
-      </h1>
-      <div class="mv__line" aria-hidden="true" />
-      <div class="mv__bottom">
-        <p class="mv__desc" v-split="{ immediate: true, delay: 0.7 }" data-split>
-          검증된 기준 데이터와 안전 규칙으로 나에게 맞는 영양을 설계합니다.<br />
-          매일을 지키는 Personal Nutrition Guide.
+<template>
+  <section id="top" class="hero" aria-labelledby="hero-title">
+    <div class="container hero__grid">
+      <div class="hero__text">
+        <p class="eyebrow">개인 맞춤 영양 가이드</p>
+        <h1 id="hero-title" class="hero__title">복용 중인 약부터 확인하고<br class="pc" /> 영양소를 추천해요</h1>
+        <p class="hero__lead">
+          3분 컨디션 체크로 2025 한국인 영양소 섭취기준과 식약처 인정 기능성 데이터에 맞춘 영양소를 추천해요. 복용 중인 약·질환·알레르기
+          주의사항은 추천 전에 먼저 확인합니다.
         </p>
-        <NuxtLink to="/#safety" class="bracket mv__now">+ 체험하기</NuxtLink>
+        <div class="hero__actions">
+          <StoreButtons />
+          <NuxtLink to="/#safety" class="text-link hero__try">안전 점검 먼저 해보기</NuxtLink>
+        </div>
+        <div class="hero__basis">
+          <p class="hero__basis-label">추천 근거</p>
+          <ul>
+            <li v-for="s in sources" :key="s" class="tag">{{ s }}</li>
+          </ul>
+        </div>
+      </div>
+      <div class="hero__visual">
+        <PhoneShot screen="home" alt="MediRing 앱 홈 화면: 컨디션 점수, 오늘의 주목 영양소, 루틴 기록" eager />
       </div>
     </div>
   </section>
 </template>
 
 <style scoped>
-.mv {
-  position: relative;
-  height: 100vh;
-  height: 100svh;
-  min-height: 640px;
-  overflow: hidden;
-  isolation: isolate;
-  background: var(--bg);
+.hero {
+  padding: clamp(48px, 7vw, 96px) 0 clamp(56px, 7vw, 96px);
 }
-/* WebGL 준비 전·불가 시 정적 배경 */
-.mv__poster {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background:
-    radial-gradient(38% 50% at 68% 38%, rgba(58, 214, 212, 0.2), transparent 70%),
-    radial-gradient(30% 40% at 88% 12%, rgba(143, 184, 255, 0.14), transparent 70%),
-    linear-gradient(180deg, #02030a 0%, #050a1c 70%, #03040c 100%);
+.hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  gap: clamp(32px, 6vw, 88px);
+  align-items: center;
 }
-.mv :deep(.scene) {
-  z-index: -1;
-}
-.mv__shade {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    linear-gradient(0deg, rgba(3, 4, 12, 0.92) 0%, rgba(3, 4, 12, 0.35) 38%, transparent 62%),
-    radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(3, 4, 12, 0.6) 100%);
-}
-.mv__content {
-  position: absolute;
-  inset: auto 0 0;
-  padding: 0 var(--gutter) clamp(40px, 6vh, 72px);
-}
-.mv__title {
-  /* 1440px 기준 약 63px, 최대 76px — 데스크톱에서 한 줄 */
-  font-size: clamp(34px, 4.4vw, 76px);
+.hero__title {
+  margin-top: 12px;
+  font-size: clamp(30px, 4.2vw, 46px);
   font-weight: 700;
-  line-height: 1.18;
-  letter-spacing: -0.045em;
+  line-height: 1.3;
+  letter-spacing: -0.03em;
 }
-.mv__br {
-  display: none;
+.hero__lead {
+  margin-top: 18px;
+  max-width: 580px;
+  font-size: clamp(16px, 1.4vw, 18px);
+  line-height: 1.75;
+  color: var(--muted);
 }
-.mv__line {
-  height: 1px;
-  margin: clamp(28px, 3.4vw, 48px) 0 clamp(24px, 3vw, 40px);
-  background: var(--line-strong);
-  transform-origin: left;
-  animation: line-in 1.4s 0.6s both var(--ease);
-}
-.mv__bottom {
+.hero__actions {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+  margin-top: 28px;
 }
-.mv__desc {
-  font-size: clamp(15px, 1.1vw, 19px);
-  font-weight: 600;
-  line-height: 1.6;
-  color: rgba(242, 246, 250, 0.88);
+.hero__basis {
+  margin-top: 36px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
 }
-.mv__now {
-  flex: none;
-  min-width: 132px;
-  animation: fade-in 1s 1.2s both var(--ease);
+.hero__basis-label {
+  font-size: 13px;
+  color: var(--faint);
 }
-@keyframes line-in {
-  from {
-    transform: scaleX(0);
-  }
+.hero__basis ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
 }
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
+.hero__basis .tag {
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+.hero__visual {
+  display: flex;
+  justify-content: center;
 }
 
-@media (max-width: 760px) {
-  .mv__br {
-    display: inline;
+@media (max-width: 820px) {
+  .hero__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .mv__bottom {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .mv__now {
-    align-self: stretch;
+  .hero__visual :deep(.phone) {
+    max-width: 240px;
   }
 }
 </style>

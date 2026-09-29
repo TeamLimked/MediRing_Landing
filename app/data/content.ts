@@ -2,7 +2,7 @@
 // - 치료·완치·예방·진단·처방 등 의료적 효능 표현 금지, "위험도" 대신 "주의"
 // - 기능성은 식약처 인정 기능성 원문 인용 원칙, 수치는 백엔드 문서에 있는 사실만
 
-// Our standard — 카운트업 통계(근거: 백엔드 README·compliance.md·safety_rules.yml)
+// 기준 데이터 — 통계(근거: 백엔드 README·compliance.md·safety_rules.yml)
 export const stats = [
   { to: 3, decimals: 0, prefix: '', suffix: '분', label: '컨디션 체크부터 첫 추천까지' },
   { to: 4.6, decimals: 1, prefix: '약 ', suffix: '만', label: '건강기능식품 품목 공공데이터' },
@@ -15,17 +15,17 @@ export const sources = ['2025 한국인 영양소 섭취기준 · 보건복지�
 // ── 안전 점검 데모: MediRing_Interface/db/reference/safety_rules.yml 의 실제 규칙 일부 ──
 export type Severity = 'block' | 'caution' | 'info'
 
-export type Nutrient = { key: string; name: string; hue: string }
+export type Nutrient = { key: string; name: string }
 
 export const demoNutrients: Nutrient[] = [
-  { key: 'vitamin_d', name: '비타민 D', hue: '#F5A623' },
-  { key: 'omega_3', name: '오메가-3', hue: '#6D8BFF' },
-  { key: 'magnesium', name: '마그네슘', hue: '#22B8CF' },
-  { key: 'calcium', name: '칼슘', hue: '#12C4B0' },
-  { key: 'iron', name: '철분', hue: '#EF5566' },
-  { key: 'vitamin_k', name: '비타민 K', hue: '#10B981' },
-  { key: 'vitamin_e', name: '비타민 E', hue: '#FF8A3D' },
-  { key: 'vitamin_a', name: '비타민 A', hue: '#A06CD5' },
+  { key: 'vitamin_d', name: '비타민 D' },
+  { key: 'omega_3', name: '오메가-3' },
+  { key: 'magnesium', name: '마그네슘' },
+  { key: 'calcium', name: '칼슘' },
+  { key: 'iron', name: '철분' },
+  { key: 'vitamin_k', name: '비타민 K' },
+  { key: 'vitamin_e', name: '비타민 E' },
+  { key: 'vitamin_a', name: '비타민 A' },
 ]
 
 export type DemoRule = { nutrient: string | null; severity: Severity; message: string; source: string }
@@ -163,7 +163,7 @@ export const faqs = [
   },
   {
     q: '무료로 쓸 수 있나요?',
-    a: '가입과 핵심 기능(컨디션 체크, 안전 점검을 거친 맞춤 추천, 영양소 도감, 섭취 체크·리마인더, 루틴 정원)은 무료예요. AI 상세 추천 근거·주간 코칭 리포트는 프리미엄 멤버십이며, 가격과 자동 갱신·해지 방법은 App Store·Google Play 결제 화면에서 안내해요.',
+    a: '가입과 핵심 기능(컨디션 체크, 안전 점검을 거친 맞춤 추천, 영양소 도감, 섭취 체크·리마인더, 루틴 기록)은 무료예요. AI 상세 추천 근거·주간 코칭 리포트는 프리미엄 멤버십이며, 가격과 자동 갱신·해지 방법은 App Store·Google Play 결제 화면에서 안내해요.',
   },
   {
     q: '추천 제품 링크로 구매하면 메디링이 수익을 얻나요?',
@@ -175,77 +175,88 @@ export const faqs = [
   },
 ]
 
-// ── 시네마틱 리디자인 ─────────────────────────────────────────
-// Our Principles(펼쳐지는 카드)
-export const principles = [
+// 이용 흐름(3단계)
+export const steps = [
   {
-    key: 'safety',
+    title: '컨디션 체크',
+    body: '피로·수면·소화·피부 상태와 생활 습관을 3분 정도 답해요. 만 19세 이상 성인이 대상이에요.',
+  },
+  {
     title: '안전 점검',
-    body: '복용약·질환·임신·알레르기 규칙을 추천보다 먼저 대조하고, 피해야 할 영양소는 순위에서 제외합니다.',
-    spec: '안전 규칙 50+ · 식약처 의약품 상호작용 · 상한섭취량',
-    to: '/#safety',
-    hue: '#3AD6D4',
+    body: '복용 중인 약·질환·임신·알레르기 정보를 안전 규칙과 먼저 대조해요. 피해야 할 영양소는 추천 순위에서 빠져요.',
   },
   {
-    key: 'recommend',
-    title: '맞춤 추천',
-    body: '문진 규칙, 비슷한 사용자의 익명 집계(5명 이상), 실제 섭취 기록을 함께 반영합니다.',
-    spec: '2025 한국인 영양소 섭취기준 · 식약처 인정 기능성',
-    to: '/#features',
-    hue: '#49D0E4',
-  },
-  {
-    key: 'routine',
-    title: '매일의 루틴',
-    body: '오늘의 체크리스트와 맞춤 리마인더. 연결이 약한 곳에서도 기록은 끊기지 않아요.',
-    spec: '오프라인 대기열 · 맞춤 리마인더 · 루틴 정원',
-    to: '/#features',
-    hue: '#34D9A0',
-  },
-  {
-    key: 'ai',
-    title: 'AI 코칭',
-    body: '동의한 경우에만, 비식별 최소 정보로 생성하고 금칙어·형식 검증을 거쳐 “AI” 표시와 함께 보여줍니다.',
-    spec: '국외이전 선택 동의 · 문장 검증 · AI 표시',
-    to: '/legal/overseas',
-    hue: '#8FB8FF',
-  },
-  {
-    key: 'privacy',
-    title: '개인정보 보호',
-    body: '건강 정보는 암호화해 저장하고, 탈퇴하면 즉시 파기합니다. 전체 데이터는 언제든 내보낼 수 있어요.',
-    spec: 'AES-256-GCM · TLS · 관리자 MFA·감사 로그',
-    to: '/legal/privacy',
-    hue: '#FF9F5A',
+    title: '추천과 기록',
+    body: '관련도가 높은 영양소를 근거와 함께 보여 주고, 매일의 섭취 체크로 루틴을 기록해요.',
   },
 ]
 
-// What we do — 탭 + 슬라이드(비주얼은 FeatureVisual 의 kind)
-export const featureTabs = [
+// 원칙(목록)
+export const principles = [
   {
     key: 'safety',
-    label: '안전 점검',
-    slides: [
-      { kind: 'meds', label: '복용약', caption: '복용약과 먼저 대조해요', to: '/#safety' },
-      { kind: 'conditions', label: '질환·임신', caption: '질환·생애주기까지 살펴요', to: '/#safety' },
-    ],
+    title: '안전 점검이 먼저예요',
+    body: '복용약·질환·임신·알레르기 규칙을 추천보다 먼저 대조하고, 피해야 할 영양소는 순위에서 제외합니다.',
+    spec: '안전 규칙 50+ · 식약처 의약품 상호작용 · 상한섭취량',
   },
   {
     key: 'recommend',
-    label: '맞춤 추천',
-    slides: [
-      { kind: 'rank', label: '영양소 순위', caption: '나에게 맞는 영양소 순위', to: '/#principles' },
-      { kind: 'evidence', label: '근거', caption: '근거를 함께 보여줘요', to: '/#numbers' },
-    ],
+    title: '근거를 함께 보여줘요',
+    body: '문진 규칙, 비슷한 사용자의 익명 집계(5명 이상), 실제 섭취 기록을 함께 반영합니다.',
+    spec: '2025 한국인 영양소 섭취기준 · 식약처 인정 기능성',
   },
   {
     key: 'routine',
-    label: '매일의 루틴',
-    slides: [
-      { kind: 'checklist', label: '섭취 체크', caption: '오늘의 체크리스트', to: '/#download' },
-      { kind: 'garden', label: '루틴 정원', caption: '챙길수록 자라는 정원', to: '/#download' },
+    title: '기록은 조용하게',
+    body: '점수나 보상 대신 연속 기록과 최근 7일·4주 기록으로 흐름을 보여줘요. 연결이 약한 곳에서도 기록은 끊기지 않아요.',
+    spec: '오프라인 대기열 · 맞춤 리마인더 · 루틴 기록',
+  },
+  {
+    key: 'ai',
+    title: 'AI 는 동의한 경우에만',
+    body: '비식별 최소 정보로 생성하고 금칙어·형식 검증을 거쳐 “AI” 표시와 함께 보여줍니다.',
+    spec: '국외이전 선택 동의 · 문장 검증 · AI 표시',
+  },
+  {
+    key: 'privacy',
+    title: '건강 정보는 암호화해요',
+    body: '건강 정보는 암호화해 저장하고, 탈퇴하면 즉시 파기합니다. 전체 데이터는 언제든 내보낼 수 있어요.',
+    spec: 'AES-256-GCM · TLS · 관리자 MFA·감사 로그',
+  },
+]
+
+// 주요 기능 — 실제 앱 화면(public/screens/{light,dark}/*.png, MediRing_APP docs/screenshots 에서 복사)
+export const features = [
+  {
+    key: 'recommend',
+    label: '맞춤 추천',
+    screen: 'recommend',
+    title: '안전 점검을 거친 영양 정보',
+    points: [
+      '식약처 인정 기능성 문구를 원문 그대로 보여줘요.',
+      '2025 한국인 영양소 섭취기준의 권장·상한 섭취량을 성별·나이에 맞춰 알려줘요.',
+      '관련도는 답변과의 관련성이에요. 효과나 효능을 보장하지 않아요.',
     ],
   },
+  {
+    key: 'intake',
+    label: '오늘의 섭취',
+    screen: 'intake',
+    title: '하루 한 번, 체크리스트로',
+    points: ['탭하면 바로 저장돼요.', '원하는 시간에 섭취 리마인더를 받을 수 있어요.', '연결이 끊겨도 기록은 기기에 남았다가 다시 연결되면 보내져요.'],
+  },
+  {
+    key: 'routine',
+    label: '루틴 기록',
+    screen: 'routine',
+    title: '연속 기록과 최근 7일·4주',
+    points: ['완료한 날만큼 식물 그림이 조금씩 자라요.', '최근 7일 막대와 4주 달력으로 흐름을 확인해요.', '기록은 서버 기준이라 기기를 바꿔도 이어져요.'],
+  },
+  {
+    key: 'catalog',
+    label: '영양소 정보',
+    screen: 'catalog',
+    title: '41개 영양소의 기능성과 섭취 기준',
+    points: ['영양소마다 식약처 인정 기능성과 섭취 기준을 확인할 수 있어요.', '식품 급원과 섭취 시 주의할 점을 함께 정리했어요.'],
+  },
 ] as const
-
-export type FeatureKind = (typeof featureTabs)[number]['slides'][number]['kind']
