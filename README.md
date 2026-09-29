@@ -21,6 +21,14 @@ npm run typecheck
 
 정적 생성이므로 값은 **빌드 시점**에 HTML 에 들어간다. 값이 바뀌면 다시 `generate` 한다.
 
+## GitHub Pages 배포
+`main` 에 푸시하면 `.github/workflows/pages.yml` 이 정적 생성 후 Pages 로 배포한다 → https://teamlimked.github.io/MediRing_Landing/
+- 저장소 Settings → Pages → Source: **GitHub Actions**
+- 하위 경로 대응: 워크플로가 `NUXT_APP_BASE_URL=/MediRing_Landing/` 로 빌드한다. 로컬에서 같은 조건으로 확인하려면
+  `NUXT_APP_BASE_URL=/MediRing_Landing/ npx nuxt generate` 후 `.output/public` 을 `MediRing_Landing/` 폴더로 서빙한다.
+- 스토어 링크: 저장소 Settings → Variables(Actions)에 `APP_STORE_URL`·`PLAY_STORE_URL` 을 넣으면 다음 배포부터 반영
+- 자체 도메인(mediring.io)으로 옮기면 `NUXT_APP_BASE_URL` 은 `/`, `NUXT_PUBLIC_SITE_URL` 은 실제 도메인으로 바꾸고 아래 라우팅 주의를 따른다.
+
 ## 구조
 ```
 app/
