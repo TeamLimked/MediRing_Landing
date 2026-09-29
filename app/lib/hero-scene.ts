@@ -9,7 +9,7 @@ export type HeroSceneOptions = {
 
 // 앱 theme.ts 의 영양소 색(NUTRIENT_HUES)
 const HUES = ['#10B981', '#FF8A3D', '#22B8CF', '#F7B801', '#6D8BFF', '#FF6B9D', '#12C4B0', '#A06CD5']
-const MINT = new THREE.Color('#34D9A0')
+const MINT = new THREE.Color('#48E0D8') // 시안-민트(시네마틱 톤)
 const RING_RADIUS = 1.75
 const TUBE_RADIUS = 0.34
 
@@ -91,7 +91,7 @@ export function createHeroScene(container: HTMLElement, options: HeroSceneOption
   const key = new THREE.DirectionalLight(0xe6fff4, 2.2)
   key.position.set(3, 4, 6)
   scene.add(key)
-  const rimWarm = new THREE.PointLight(0xff8a3d, 30, 18)
+  const rimWarm = new THREE.PointLight(0xff8a3d, 22, 18)
   rimWarm.position.set(-4, -2.5, 2)
   scene.add(rimWarm)
   const rimCool = new THREE.PointLight(0x22b8cf, 40, 18)
@@ -127,7 +127,7 @@ export function createHeroScene(container: HTMLElement, options: HeroSceneOption
   world.add(ringGroup)
 
   const ringMat = new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#E9FFF6'),
+    color: new THREE.Color('#E6FBFF'),
     metalness: 0,
     roughness: 0.08,
     transmission: 1,
@@ -138,7 +138,7 @@ export function createHeroScene(container: HTMLElement, options: HeroSceneOption
     iridescenceThicknessRange: [120, 480],
     clearcoat: 1,
     clearcoatRoughness: 0.06,
-    attenuationColor: new THREE.Color('#10B981'),
+    attenuationColor: new THREE.Color('#1FB5C4'),
     attenuationDistance: 2.4,
     envMapIntensity: 1.25,
   })
@@ -330,7 +330,7 @@ export function createHeroScene(container: HTMLElement, options: HeroSceneOption
   const pCol = new Float32Array(PARTICLES * 3)
   const pScale = new Float32Array(PARTICLES)
   const pPhase = new Float32Array(PARTICLES)
-  const particlePalette = ['#34D9A0', '#34D9A0', '#34D9A0', '#49D0E4', '#49D0E4', '#FF9F5A', '#EAF6EF'].map((c) => new THREE.Color(c))
+  const particlePalette = ['#3AD6D4', '#3AD6D4', '#49D0E4', '#49D0E4', '#34D9A0', '#8FB8FF', '#EAF6EF'].map((c) => new THREE.Color(c))
   for (let i = 0; i < PARTICLES; i += 1) {
     // 링 주변에 모이고 바깥으로 흩어지는 분포
     const r = 2.6 + Math.pow(Math.random(), 1.6) * 9
@@ -407,13 +407,13 @@ export function createHeroScene(container: HTMLElement, options: HeroSceneOption
     const halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * dist
     const halfW = halfH * camera.aspect
     if (camera.aspect > 1.05) {
-      // 데스크톱: 텍스트 오른쪽
-      layout.position.set(halfW * 0.5, -0.05, 0)
-      layout.scale.setScalar(Math.min(0.98, 0.72 + camera.aspect * 0.12))
+      // 데스크톱: 헤드라인이 왼쪽 아래에 오므로 장면은 오른쪽 위로
+      layout.position.set(halfW * 0.34, halfH * 0.16, 0)
+      layout.scale.setScalar(Math.min(1.12, 0.8 + camera.aspect * 0.14))
     } else {
       // 모바일·세로: 위쪽 가운데, 텍스트는 아래
-      layout.position.set(0, halfH * 0.44, 0)
-      layout.scale.setScalar(Math.max(0.4, Math.min(0.75, halfW / 4.8)))
+      layout.position.set(0, halfH * 0.36, 0)
+      layout.scale.setScalar(Math.max(0.46, Math.min(0.8, halfW / 4.4)))
     }
     if (!running) renderFrame(lastT)
   }
