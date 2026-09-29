@@ -58,9 +58,10 @@
   padding: 0 var(--gutter) clamp(40px, 6vh, 72px);
 }
 .mv__title {
-  font-size: clamp(42px, 6.1vw, 112px);
+  /* 1440px 기준 약 63px, 최대 76px — 데스크톱에서 한 줄 */
+  font-size: clamp(34px, 4.4vw, 76px);
   font-weight: 700;
-  line-height: 1.12;
+  line-height: 1.18;
   letter-spacing: -0.045em;
 }
 .mv__br {
@@ -80,7 +81,7 @@
   gap: 24px;
 }
 .mv__desc {
-  font-size: clamp(16px, 1.25vw, 21px);
+  font-size: clamp(15px, 1.1vw, 19px);
   font-weight: 600;
   line-height: 1.6;
   color: rgba(242, 246, 250, 0.88);
