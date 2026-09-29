@@ -4,6 +4,10 @@ const title = 'MediRing — 안전 점검부터 하는 개인 맞춤 영양 가�
 const description =
   '3분 컨디션 체크로 2025 한국인 영양소 섭취기준과 식약처 인정 기능성 데이터에 기반한 맞춤 영양소를 추천해요. 복용 중인 약·질환·알레르기 주의사항은 추천 전에 먼저 확인합니다.'
 
+// GitHub Pages 처럼 하위 경로(/MediRing_Landing/)에 올릴 때는 빌드 시 NUXT_APP_BASE_URL 로 지정한다.
+// head 의 정적 파일 경로는 Nuxt 가 자동으로 접두사를 붙이지 않으므로 직접 붙인다.
+const baseURL = process.env.NUXT_APP_BASE_URL || '/'
+
 export default defineNuxtConfig({
   compatibilityDate: '2026-09-01',
   devtools: { enabled: false },
@@ -35,7 +39,7 @@ export default defineNuxtConfig({
         { name: 'twitter:card', content: 'summary_large_image' },
       ],
       link: [
-        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'icon', type: 'image/svg+xml', href: `${baseURL}favicon.svg` },
         { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: '' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },

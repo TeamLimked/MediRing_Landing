@@ -1,0 +1,59 @@
+# main 에 푸시하면 정적 생성(nuxt generate) 결과를 GitHub Pages 로 배포한다.
+# 저장소 Settings → Pages → Source 가 "GitHub Actions" 여야 한다.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 진행 중인 배포는 끝까지 두고, 대기 중인 것만 최신으로 교체
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Generate static site
+        run: npx nuxt generate
+        env:
+          # 프로젝트 페이지는 https://<owner>.github.io/<repo>/ 하위 경로에서 서빙된다
+          NUXT_APP_BASE_URL: ${{ steps.pages.outputs.base_path }}/
+          NUXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
+          NUXT_PUBLIC_APP_STORE_URL: ${{ vars.APP_STORE_URL }}
+          NUXT_PUBLIC_PLAY_STORE_URL: ${{ vars.PLAY_STORE_URL }}
+
+      - run: touch .output/public/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: .output/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
