@@ -69,7 +69,7 @@ onBeforeUnmount(() => {
   transition: background-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
 }
 .header--solid {
-  background: rgba(7, 19, 15, 0.72);
+  background: rgba(7, 19, 15, 0.88);
   backdrop-filter: saturate(160%) blur(16px);
   -webkit-backdrop-filter: saturate(160%) blur(16px);
   box-shadow: 0 1px 0 var(--night-line);
