@@ -1,4 +1,4 @@
-# MediRing Landing (Nuxt 4 · three.js · GSAP)
+# MediRing Landing (Nuxt 4)
 
 MediRing 홍보용 랜딩 페이지. 정적 사이트로 생성(`nuxt generate`)해 어떤 정적 호스팅에도 올릴 수 있다.
 
@@ -44,44 +44,32 @@ npm run typecheck
 app/
   app.vue                     # 헤더 · <NuxtPage> · 푸터
   pages/                      # index(랜딩) · legal/[doc] · support
-  router.options.ts           # /#섹션 이동(Lenis 사용 시 Lenis 로 스크롤)
-  plugins/
-    motion.client.ts          # GSAP(ScrollTrigger·SplitText) 등록, Lenis 부드러운 스크롤, v-split 디렉티브
-    split.server.ts           # 프리렌더용 v-split 빈 디렉티브
-    reveal.ts                 # v-reveal 스크롤 등장
-  lib/
-    hero-scene.ts             # 히어로 3D(유리 링·ECG·궤도 알약·입자)
-    who-scene.ts              # Who → Principles 배경 3D(와이어프레임 지형·캡슐·링 → 입자 파도)
+  router.options.ts           # /#섹션 이동(고정 헤더 높이만큼 띄움, 모션 줄이기면 즉시 이동)
   components/
-    sections/                 # Hero · Story(Who+Principles) · Features · SafetyDemo · Numbers · Faq · LinkCards · Download
-    PrincipleCards.vue        # 펼쳐지는 원칙 카드
-    FeatureVisual.vue         # 기능 슬라이드 비주얼(CSS 로 그린 UI)
+    sections/                 # Hero · Steps(이용 흐름) · SafetyDemo(안전 점검 체험) · Features(실제 앱 화면 탭) · Standards(기준 데이터·원칙) · Faq · Download
+    PhoneShot.vue             # 실제 앱 화면(라이트/다크 자동) 프레임
     LegalPage.vue             # 약관·정책 공통 레이아웃
-    SiteHeader.vue            # 메가 메뉴 헤더(스크롤 방향에 따라 숨김)
-    SiteFooter.vue StoreButtons.vue AppLogo.vue HeroScene.vue
+    SiteHeader.vue SiteFooter.vue StoreButtons.vue AppLogo.vue
   data/content.ts             # 랜딩 문구·데이터
   data/legal.ts               # 약관·정책 문서(백엔드 원문 사본)
-  assets/css/main.css         # 디자인 토큰(딥 네이비 + 시안), 괄호 버튼 등 공통 스타일
+  assets/css/main.css         # 디자인 토큰(앱 src/theme.ts 와 같은 값) · 버튼·카드·태그
+public/screens/{light,dark}/  # 앱 화면 캡처(MediRing_APP docs/screenshots 에서 복사)
 ```
 
-## 디자인·모션
-- 시네마틱 다크 톤(딥 네이비 + 시안), SUIT 서체, 모서리 괄호 버튼. 레이아웃·인터랙션은 방산 기업 사이트(welcrondefense.com) 구성을 참고했고
-  이미지·영상·문구는 쓰지 않았다 — 영상·사진 자리는 three.js 장면과 CSS 비주얼로 대체.
-- Who we are 는 스크롤 고정(sticky) 구간: 진행도(ScrollTrigger scrub)에 따라 와이어프레임 → 입자 파도로 전환되고, 같은 캔버스가 Principles 뒤까지 이어진다.
-- GSAP 은 3.13 부터 SplitText 등 모든 플러그인이 무료(Standard 'no charge' 라이선스)다.
-- `prefers-reduced-motion` 이면 Lenis·스크롤 고정·텍스트 분할·자동 슬라이드를 끄고 최종 상태를 바로 보여준다.
-
-## 히어로 3D
-- 유리 링(MeshPhysicalMaterial 투과·무지갯빛) + 링 코어의 심박 발광 + 링 둘레를 도는 ECG 파형
-- 앱의 영양소 색으로 칠한 캡슐·연질캡슐·정제가 세 궤도면을 돌고, 입자 필드는 커스텀 셰이더로 반짝임
-- 성능: 화면 밖·탭 숨김이면 렌더 정지, DPR 상한(저사양 1.5), 저사양·소형 화면은 입자·분할 수 축소, 언마운트 시 전부 dispose.
-  WebGL 불가 시 CSS 그라데이션 포스터만 남음
-- `HeroScene` 을 `.client.vue` 로 바꾸지 말 것 — 하이드레이션 중 `onMounted` 시점에 ref 가 비어 장면이 시작되지 않는다(`<ClientOnly>` 로 감싼다)
+## 디자인 — "차분한 헬스케어"
+앱(MediRing_APP, PR #27)과 같은 원칙을 따른다.
+- 옅은 회색 바탕 + 흰 카드, **짙은 녹색 한 가지** 포인트(`--accent`·`--accent-strong`), Pretendard, 작은 모서리(카드 12·버튼 10·태그 4)·1px 선
+- 그림자·그라데이션·다색 장식·캐릭터·이모지·느낌표·장식 애니메이션을 쓰지 않는다. 상태 색(주의·제외)은 의미 전달에만 쓴다
+- 토큰 값은 앱 `src/theme.ts` 와 같다(라이트/다크 모두). 흰 바탕 위 주의 글자는 앱의 장식용 `warning` 대신 `--warning-text`(4.5:1 이상)를 쓴다
+- 라이트/다크는 시스템 설정(`prefers-color-scheme`)을 따르고, 앱 화면 캡처도 같은 테마로 바뀐다
+- 기능 소개는 CSS 로 그린 가짜 화면 대신 **실제 앱 화면**을 쓴다. 앱 화면이 바뀌면 `MediRing_APP/docs/screenshots/{light,dark}/{home,recommend,intake,routine,catalog}.png` 를 다시 복사한다
+- 로고는 앱 `BrandMark` 와 같은 단색 표지(링 + 새싹 잎 + 심박 점)
+- 3D·스크롤 연출(three.js·GSAP·Lenis)은 제거했다 — 번들이 가벼워지고 모션 줄이기 설정과도 충돌하지 않는다
 
 ## 문구 원칙
 `MediRing_Interface/docs/compliance.md` 를 따른다.
 - 치료·완치·예방·진단·처방 등 의료 효능 표현 금지, "위험도" 대신 "주의"
-- 수치는 백엔드·앱 코드/문서에 근거가 있는 것만(예: 안전 규칙 56개 → "50+", 공공 품목 약 4.6만 건 → "약 4.6만", KDRI 372행 검증)
+- 수치는 백엔드·앱 코드/문서에 근거가 있는 것만(예: 안전 규칙 56개 → "50+", 공공 품목 약 4.6만 건 → "약 4.6만", KDRI 372행 검증). 숫자는 카운트업 없이 그대로 보여준다
 - 안전 점검 데모의 규칙·문구는 `MediRing_Interface/db/reference/safety_rules.yml` 에서 그대로 가져옴 — 원본이 바뀌면 `data/content.ts` 도 맞춘다
 - 최상급·효능 단정 표현("가장 안전한" 등)을 쓰지 않는다. 기능 슬라이드 비주얼의 안전 규칙 항목도 실제 규칙 데이터 기준
 - 가격은 스토어 결제 화면 기준이라 랜딩에 적지 않는다
