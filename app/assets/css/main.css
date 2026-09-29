@@ -1,50 +1,41 @@
-/* MediRing 랜딩 — 앱의 "Fresh Citrus" 아이덴티티(MediRing_APP/src/theme.ts)를 웹 토큰으로 옮김 */
+/* MediRing 랜딩 — 시네마틱 다크 톤(딥 네이비 + 시안). 포인트 색은 앱 팔레트(민트·아쿠아·탄제린)에서 가져옴 */
 :root {
-  --bg: #f1faf5;
-  --bg-2: #e7f6ee;
-  --card: #ffffff;
-  --ink: #0e2a20;
-  --muted: #4a6155;
-  --faint: #5f7a6c;
-  --line: #e1f0e9;
-  --accent: #10b981;
-  --accent-strong: #0a7d55;
-  --accent-soft: #d5f4e6;
-  --spark: #ff8a3d;
-  --spark-soft: #ffe7d3;
-  --aqua: #22b8cf;
-  --aqua-soft: #d2f1f6;
-  --critical: #e5484d;
-  --critical-soft: #fde4e5;
-  --warning: #c27803;
-  --warning-soft: #fdf0d5;
-  --info: #0e7490;
-  --info-soft: #d9f2f7;
+  --bg: #03040c;
+  --bg-2: #060918;
+  --panel: #0a0f22;
+  --panel-2: #10172f;
+  --line: rgba(236, 244, 255, 0.1);
+  --line-strong: rgba(236, 244, 255, 0.22);
+  --ink: #f2f6fa;
+  --muted: #a3acc0;
+  --faint: #6f7a92;
 
-  /* 다크 섹션(히어로·개인정보·다운로드·푸터) */
-  --night: #07130f;
-  --night-2: #0c1f18;
-  --night-3: #12291f;
-  --night-ink: #eaf6ef;
-  --night-muted: #9db7aa;
-  --night-line: rgba(234, 246, 239, 0.1);
-  --mint-bright: #34d9a0;
+  --accent: #3ad6d4; /* 시안(주 포인트) — 앱 아쿠아와 민트 사이 */
+  --accent-deep: #1a9fb0;
+  --accent-soft: rgba(58, 214, 212, 0.12);
+  --mint: #34d9a0;
+  --aqua: #49d0e4;
+  --spark: #ff9f5a;
+  --critical: #ff6b7d;
+  --critical-soft: rgba(255, 107, 125, 0.14);
+  --warning: #f5b84e;
+  --warning-soft: rgba(245, 184, 78, 0.14);
+  --ok: #4bd57c;
+  --ok-soft: rgba(75, 213, 124, 0.14);
 
-  --radius-sm: 12px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
-  --shadow-card: 0 1px 2px rgba(14, 42, 32, 0.04), 0 16px 40px -18px rgba(14, 42, 32, 0.18);
-  --shadow-float: 0 24px 60px -20px rgba(4, 20, 14, 0.45);
+  --font-sans: 'SUIT Variable', 'SUIT', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR',
+    'Malgun Gothic', sans-serif;
 
-  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo',
-    'Noto Sans KR', 'Malgun Gothic', sans-serif;
-  --font-display: 'Jua', var(--font-sans);
-
-  --container: 1180px;
-  --gutter: clamp(16px, 4vw, 32px);
-  --section-y: clamp(80px, 11vw, 140px);
-  --header-h: 68px;
+  --container: 1680px;
+  --gutter: clamp(20px, 2.6vw, 40px);
+  --section-y: clamp(96px, 12vw, 180px);
+  --header-h: 94px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@media (max-width: 1024px) {
+  :root {
+    --header-h: 68px;
+  }
 }
 
 *,
@@ -54,9 +45,20 @@
 }
 
 html {
-  scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--header-h) + 12px);
+  scroll-padding-top: var(--header-h);
   -webkit-text-size-adjust: 100%;
+  background: var(--bg);
+}
+/* Lenis 가 켜지면 부드러운 스크롤은 Lenis 가 담당 */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
@@ -66,7 +68,7 @@ body {
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.65;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   word-break: keep-all;
   overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
@@ -76,22 +78,20 @@ body {
 
 img,
 svg,
-canvas {
+canvas,
+video {
   display: block;
   max-width: 100%;
 }
-
 a {
   color: inherit;
   text-decoration: none;
 }
-
 button {
   font: inherit;
   color: inherit;
   cursor: pointer;
 }
-
 h1,
 h2,
 h3,
@@ -99,16 +99,13 @@ h4,
 p {
   margin: 0;
 }
-
 :focus-visible {
-  outline: 3px solid var(--aqua);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 6px;
 }
-
 ::selection {
-  background: var(--accent-soft);
-  color: var(--ink);
+  background: var(--accent);
+  color: #03121a;
 }
 
 .sr-only {
@@ -122,27 +119,20 @@ p {
   white-space: nowrap;
   border: 0;
 }
-
 .skip-link {
   position: fixed;
   top: 12px;
   left: 12px;
-  z-index: 100;
+  z-index: 200;
   padding: 10px 16px;
-  border-radius: 999px;
-  background: var(--ink);
-  color: #fff;
+  background: var(--accent);
+  color: #03121a;
   font-weight: 700;
   transform: translateY(-160%);
   transition: transform 0.2s;
 }
 .skip-link:focus {
   transform: none;
-}
-
-/* 라우터 해시 이동(/#how 등) 시 고정 헤더에 가리지 않도록 */
-section[id] {
-  scroll-margin-top: calc(var(--header-h) + 12px);
 }
 
 /* ── 레이아웃 ─────────────────────────────────────────── */
@@ -152,140 +142,134 @@ section[id] {
   margin: 0 auto;
   padding: 0 var(--gutter);
 }
-
 .section {
   position: relative;
   padding: var(--section-y) 0;
 }
 
-.section--night {
-  background: var(--night);
-  color: var(--night-ink);
-}
-
-.section-head {
-  max-width: 720px;
-  margin-bottom: clamp(40px, 6vw, 64px);
-}
-.section-head--center {
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-
+/* 작은 시안 점 + 라벨 (· Who we are) */
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 18px;
-  font-size: 14px;
+  gap: 10px;
+  font-size: 17px;
   font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--accent-strong);
+  letter-spacing: -0.01em;
+  color: var(--accent);
 }
 .eyebrow::before {
   content: '';
-  width: 18px;
-  height: 2px;
-  border-radius: 2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
   background: currentColor;
-}
-.section--night .eyebrow {
-  color: var(--mint-bright);
+  box-shadow: 0 0 10px currentColor;
 }
 
-.h2 {
-  font-size: clamp(30px, 4.4vw, 48px);
-  line-height: 1.22;
+.display {
+  font-size: clamp(34px, 3.4vw, 60px);
   font-weight: 800;
+  line-height: 1.3;
   letter-spacing: -0.035em;
 }
-.h2 em {
-  font-style: normal;
-  color: var(--accent-strong);
-}
-.section--night .h2 em {
-  color: var(--mint-bright);
-}
-
 .lead {
-  margin-top: 18px;
-  font-size: clamp(16px, 1.6vw, 19px);
-  line-height: 1.7;
+  font-size: clamp(16px, 1.15vw, 19px);
+  line-height: 1.75;
   color: var(--muted);
 }
-.section--night .lead {
-  color: var(--night-muted);
+
+/* 데스크톱에서만 쓰는 줄바꿈 */
+@media (max-width: 760px) {
+  br.pc {
+    display: none;
+  }
 }
 
-.card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+/* ── 모서리 괄호 버튼 [ Learn more ] ─────────────────────── */
+@property --s {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 10px;
 }
-
-/* ── 버튼 ─────────────────────────────────────────────── */
-.btn {
+.bracket {
+  --b: var(--line-strong);
+  --s: 10px;
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 52px;
-  padding: 0 24px;
+  min-width: 140px;
+  min-height: 58px;
+  padding: 0 28px;
   border: 0;
-  border-radius: 999px;
+  background:
+    linear-gradient(var(--b), var(--b)) top left / var(--s) 1px no-repeat,
+    linear-gradient(var(--b), var(--b)) top left / 1px var(--s) no-repeat,
+    linear-gradient(var(--b), var(--b)) top right / var(--s) 1px no-repeat,
+    linear-gradient(var(--b), var(--b)) top right / 1px var(--s) no-repeat,
+    linear-gradient(var(--b), var(--b)) bottom left / var(--s) 1px no-repeat,
+    linear-gradient(var(--b), var(--b)) bottom left / 1px var(--s) no-repeat,
+    linear-gradient(var(--b), var(--b)) bottom right / var(--s) 1px no-repeat,
+    linear-gradient(var(--b), var(--b)) bottom right / 1px var(--s) no-repeat;
+  color: var(--ink);
   font-size: 16px;
   font-weight: 700;
-  letter-spacing: -0.01em;
   white-space: nowrap;
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+  transition: --s 0.35s var(--ease), color 0.3s;
 }
-.btn:hover {
-  transform: translateY(-2px);
+.bracket::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  z-index: -1;
+  background: var(--accent);
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
 }
-.btn:active {
-  transform: translateY(0);
+.bracket:hover {
+  --b: var(--accent);
+  --s: 16px;
+  color: #03121a;
 }
-.btn--primary {
-  background: var(--accent-strong);
-  color: #fff;
-  box-shadow: 0 10px 30px -10px rgba(10, 125, 85, 0.6);
+.bracket:hover::after {
+  opacity: 1;
+  transform: none;
 }
-.btn--primary:hover {
-  background: #086a48;
+.bracket--accent {
+  --b: var(--accent);
 }
-.btn--mint {
-  background: var(--mint-bright);
-  color: #05221a;
-  box-shadow: 0 10px 40px -10px rgba(52, 217, 160, 0.7);
+.bracket--sm {
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 20px;
+  font-size: 15px;
 }
-.btn--mint:hover {
-  background: #5ee6b6;
+
+/* 텍스트 링크 + 화살표 */
+.arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
-.btn--ghost-light {
-  background: rgba(234, 246, 239, 0.08);
-  color: var(--night-ink);
-  box-shadow: inset 0 0 0 1px rgba(234, 246, 239, 0.22);
+.arrow-link svg {
+  flex: none;
+  transition: transform 0.3s var(--ease);
 }
-.btn--ghost-light:hover {
-  background: rgba(234, 246, 239, 0.14);
-}
-.btn--ghost {
-  background: transparent;
-  color: var(--ink);
-  box-shadow: inset 0 0 0 1.5px var(--line);
-}
-.btn--ghost:hover {
-  box-shadow: inset 0 0 0 1.5px var(--accent);
+.arrow-link:hover svg {
+  transform: translateX(6px);
 }
 
 /* ── 스크롤 등장 ─────────────────────────────────────────── */
 /* html.js 는 head 인라인 스크립트가 붙인다 → JS 가 없으면 처음부터 보인다 */
 .js .reveal {
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform: translateY(40px);
+  transition: opacity 1s var(--ease), transform 1s var(--ease);
   transition-delay: var(--reveal-delay, 0ms);
 }
 .js .reveal.is-visible {
@@ -294,9 +278,6 @@ section[id] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   *,
   *::before,
   *::after {
@@ -307,5 +288,21 @@ section[id] {
   .js .reveal {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* v-split 대상: JS 가 분할하기 전에는 숨김(깜빡임 방지). 스크립트가 실패해도 2.5초 뒤에는 보이도록 */
+.js [data-split]:not(.split-ready) {
+  visibility: hidden;
+  animation: split-fallback 0s 2.5s forwards;
+}
+@keyframes split-fallback {
+  to {
+    visibility: visible;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js [data-split]:not(.split-ready) {
+    visibility: visible;
   }
 }
