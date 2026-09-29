@@ -62,7 +62,7 @@ watch(active, () => nextTick(revealActive))
         </NuxtLink>
       </nav>
 
-      <article class="legal__doc card">
+      <article class="legal__doc">
         <p v-if="links.legalDraft" class="legal__draft">이 문서는 출시 전 초안이며 법무 검토 후 확정됩니다.</p>
         <!-- eslint-disable-next-line vue/no-v-html -- 저장소에 고정된 정적 문구(백엔드 원문), 회사 정보는 이스케이프됨 -->
         <div class="prose" @click="onClick" v-html="html" />
@@ -77,73 +77,82 @@ watch(active, () => nextTick(revealActive))
   background: var(--bg);
 }
 .legal__band {
-  padding: calc(var(--header-h) + 56px) 0 56px;
-  background: radial-gradient(50% 120% at 85% 0%, rgba(52, 217, 160, 0.18), transparent 70%), var(--night);
-  color: var(--night-ink);
+  padding: calc(var(--header-h) + clamp(56px, 7vw, 110px)) 0 clamp(48px, 5vw, 80px);
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(45% 120% at 85% 0%, rgba(58, 214, 212, 0.16), transparent 70%),
+    linear-gradient(rgba(236, 244, 255, 0.04) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgba(236, 244, 255, 0.04) 1px, transparent 1px) 0 0 / 48px 48px,
+    var(--bg);
 }
 .legal__crumb {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   font-size: 14px;
-  color: var(--night-muted);
+  font-weight: 600;
+  color: var(--accent);
+}
+.legal__crumb a {
+  color: var(--muted);
 }
 .legal__crumb a:hover {
-  color: var(--night-ink);
+  color: var(--ink);
 }
 .legal__title {
-  margin-top: 14px;
-  font-size: clamp(28px, 4vw, 42px);
+  margin-top: 18px;
+  font-size: clamp(32px, 4vw, 60px);
   font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 1.25;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
 }
 .legal__date {
-  margin-top: 10px;
+  margin-top: 14px;
   font-size: 14px;
-  color: var(--night-muted);
+  color: var(--muted);
 }
 .legal__body {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: 240px minmax(0, 1fr);
   min-width: 0;
-  gap: 32px;
+  gap: clamp(28px, 4vw, 64px);
   align-items: start;
-  padding-top: 40px;
-  padding-bottom: 96px;
+  padding-top: clamp(40px, 5vw, 72px);
+  padding-bottom: clamp(96px, 10vw, 160px);
 }
 .legal__nav {
   position: sticky;
-  top: calc(var(--header-h) + 24px);
+  top: calc(var(--header-h) + 32px);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  border-top: 1px solid var(--line-strong);
 }
 .legal__nav a {
-  padding: 10px 14px;
-  border-radius: 12px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--line);
   font-size: 15px;
   font-weight: 600;
   color: var(--muted);
-  transition: background-color 0.2s, color 0.2s;
+  transition: color 0.2s, padding 0.3s var(--ease);
 }
 .legal__nav a:hover {
-  background: var(--accent-soft);
   color: var(--ink);
+  padding-left: 10px;
 }
 .legal__nav a.active {
-  background: var(--card);
-  color: var(--accent-strong);
-  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--accent);
+  font-weight: 800;
 }
 .legal__doc {
-  padding: clamp(24px, 4vw, 48px);
+  padding: clamp(24px, 4vw, 56px);
+  background: var(--panel);
+  box-shadow: inset 0 0 0 1px var(--line);
 }
 .legal__draft {
-  margin-bottom: 28px;
-  padding: 12px 16px;
-  border-radius: 12px;
+  margin-bottom: 32px;
+  padding: 14px 18px;
   background: var(--warning-soft);
-  color: #7a4b00;
+  box-shadow: inset 0 0 0 1px rgba(245, 184, 78, 0.3);
+  color: #ffe2ae;
   font-size: 14px;
   font-weight: 600;
 }
@@ -151,14 +160,15 @@ watch(active, () => nextTick(revealActive))
 /* 본문(v-html) */
 .prose {
   font-size: 16px;
-  line-height: 1.8;
-  color: var(--ink);
+  line-height: 1.85;
+  color: rgba(242, 246, 250, 0.88);
 }
 .prose :deep(h2) {
-  margin: 40px 0 12px;
-  font-size: 20px;
+  margin: 48px 0 14px;
+  font-size: 21px;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  color: var(--ink);
 }
 .prose :deep(h2:first-child) {
   margin-top: 0;
@@ -181,13 +191,14 @@ watch(active, () => nextTick(revealActive))
   color: var(--accent);
 }
 .prose :deep(a) {
-  color: var(--accent-strong);
-  font-weight: 600;
+  color: var(--accent);
+  font-weight: 700;
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 4px;
 }
 .prose :deep(strong) {
   font-weight: 800;
+  color: var(--ink);
 }
 .prose :deep(.muted) {
   color: var(--faint);
@@ -195,21 +206,20 @@ watch(active, () => nextTick(revealActive))
 }
 .prose :deep(.table-wrap) {
   overflow-x: auto;
-  border-radius: 14px;
   box-shadow: inset 0 0 0 1px var(--line);
 }
 .prose :deep(table) {
   width: 100%;
   border-collapse: collapse;
   font-size: 14.5px;
-  line-height: 1.65;
+  line-height: 1.7;
 }
 .prose :deep(table:has(thead)) {
   min-width: 560px;
 }
 .prose :deep(th),
 .prose :deep(td) {
-  padding: 12px 14px;
+  padding: 14px 16px;
   text-align: left;
   vertical-align: top;
   border-bottom: 1px solid var(--line);
@@ -218,16 +228,17 @@ watch(active, () => nextTick(revealActive))
   border-bottom: 0;
 }
 .prose :deep(th) {
-  background: var(--bg);
+  background: rgba(236, 244, 255, 0.04);
   font-weight: 700;
+  color: var(--ink);
   white-space: nowrap;
 }
 .prose :deep(thead th) {
   background: var(--accent-soft);
-  color: var(--accent-strong);
+  color: var(--accent);
 }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .legal__body {
     grid-template-columns: minmax(0, 1fr);
     gap: 20px;
@@ -236,23 +247,26 @@ watch(active, () => nextTick(revealActive))
     position: static;
     flex-direction: row;
     gap: 6px;
+    min-width: 0;
     margin: 0 calc(var(--gutter) * -1);
     padding: 0 var(--gutter) 4px;
     overflow-x: auto;
     scrollbar-width: none;
-    min-width: 0;
+    border-top: 0;
   }
   .legal__nav a {
     flex: none;
-    padding: 8px 14px;
+    padding: 9px 16px;
+    border: 0;
     font-size: 14px;
-    border-radius: 999px;
-    background: var(--card);
     box-shadow: inset 0 0 0 1px var(--line);
   }
+  .legal__nav a:hover {
+    padding-left: 16px;
+  }
   .legal__nav a.active {
-    background: var(--accent-strong);
-    color: #fff;
+    background: var(--accent);
+    color: #03121a;
     box-shadow: none;
   }
   .prose :deep(th) {
