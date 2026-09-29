@@ -1,14 +1,19 @@
 <script setup lang="ts">
+// 다른 페이지(약관 등)에서도 홈의 해당 섹션으로 이동하도록 경로 + 해시로 둔다
 const nav = [
-  { href: '#how', label: '작동 방식' },
-  { href: '#safety', label: '안전 점검' },
-  { href: '#features', label: '기능' },
-  { href: '#privacy', label: '개인정보' },
-  { href: '#faq', label: 'FAQ' },
+  { to: '/#how', label: '작동 방식' },
+  { to: '/#safety', label: '안전 점검' },
+  { to: '/#features', label: '기능' },
+  { to: '/#privacy', label: '개인정보' },
+  { to: '/#faq', label: 'FAQ' },
 ]
 
+const route = useRoute()
 const scrolled = ref(false)
 const open = ref(false)
+// 홈 히어로(어두운 배경) 위에서만 투명, 나머지 페이지는 처음부터 불투명
+const solid = computed(() => scrolled.value || open.value || route.path !== '/')
+watch(() => route.fullPath, () => (open.value = false))
 
 function onScroll() {
   scrolled.value = window.scrollY > 24
@@ -29,17 +34,17 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <header class="header" :class="{ 'header--solid': scrolled || open }">
+  <header class="header" :class="{ 'header--solid': solid }">
     <div class="container header__bar">
-      <a href="#top" class="header__brand" aria-label="MediRing 홈" @click="open = false">
+      <NuxtLink to="/" class="header__brand" aria-label="MediRing 홈" @click="open = false">
         <AppLogo />
-      </a>
+      </NuxtLink>
 
       <nav class="header__nav" aria-label="주요 메뉴">
-        <a v-for="n in nav" :key="n.href" :href="n.href">{{ n.label }}</a>
+        <NuxtLink v-for="n in nav" :key="n.to" :to="n.to">{{ n.label }}</NuxtLink>
       </nav>
 
-      <a href="#download" class="btn header__cta">앱 받기</a>
+      <NuxtLink to="/#download" class="btn header__cta">앱 받기</NuxtLink>
 
       <button
         class="header__toggle"
@@ -54,8 +59,8 @@ onBeforeUnmount(() => {
     </div>
 
     <nav v-show="open" id="mobile-nav" class="header__mobile" aria-label="모바일 메뉴">
-      <a v-for="n in nav" :key="n.href" :href="n.href" @click="open = false">{{ n.label }}</a>
-      <a href="#download" class="btn btn--mint" @click="open = false">앱 받기</a>
+      <NuxtLink v-for="n in nav" :key="n.to" :to="n.to" @click="open = false">{{ n.label }}</NuxtLink>
+      <NuxtLink to="/#download" class="btn btn--mint" @click="open = false">앱 받기</NuxtLink>
     </nav>
   </header>
 </template>

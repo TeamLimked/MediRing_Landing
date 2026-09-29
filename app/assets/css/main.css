@@ -140,6 +140,11 @@ p {
   transform: none;
 }
 
+/* 라우터 해시 이동(/#how 등) 시 고정 헤더에 가리지 않도록 */
+section[id] {
+  scroll-margin-top: calc(var(--header-h) + 12px);
+}
+
 /* ── 레이아웃 ─────────────────────────────────────────── */
 .container {
   width: 100%;
