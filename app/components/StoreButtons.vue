@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// 괄호 버튼 스타일의 스토어 링크. URL 이 비어 있으면 "출시 예정" 으로 비활성 표시.
+// 스토어 링크. URL 이 비어 있으면 "출시 예정" 으로 비활성 표시.
 const links = useSiteLinks()
 const stores = computed(() => [
   { key: 'ios', label: 'App Store', href: links.appStore },
@@ -13,12 +13,12 @@ const stores = computed(() => [
       :is="s.href ? 'a' : 'span'"
       v-for="s in stores"
       :key="s.key"
-      class="bracket store"
-      :class="{ 'store--soon': !s.href }"
+      class="btn store"
+      :class="s.href ? 'btn--primary' : 'store--soon'"
       :href="s.href || undefined"
       :target="s.href ? '_blank' : undefined"
       :rel="s.href ? 'noopener' : undefined"
-      :aria-label="s.href ? `${s.label}에서 MediRing 받기` : `${s.label} 출시 예정`"
+      :aria-label="s.href ? `${s.label}에서 MediRing 받기` : undefined"
     >
       <svg v-if="s.key === 'ios'" class="store__icon" viewBox="0 0 24 24" aria-hidden="true">
         <path
@@ -29,10 +29,8 @@ const stores = computed(() => [
       <svg v-else class="store__icon" viewBox="0 0 24 24" aria-hidden="true">
         <path fill="currentColor" d="M3.6 2.3 13.3 12l-9.7 9.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1zm13 6.4-3.3 3.3-9.7-9.7c.3-.2.8-.2 1.2 0l11.8 6.4zm0 6.6-11.8 6.4c-.4.2-.9.2-1.2 0l9.7-9.7 3.3 3.3zm3.8-1.9-3.8 1.9-3.3-3.3 3.3-3.3 3.8 2c1 .6 1 2.1 0 2.7z" />
       </svg>
-      <span class="store__text">
-        <strong>{{ s.label }}</strong>
-        <small v-if="!s.href">출시 예정</small>
-      </span>
+      {{ s.label }}
+      <span v-if="!s.href" class="store__soon">출시 예정</span>
     </component>
   </div>
 </template>
@@ -41,42 +39,30 @@ const stores = computed(() => [
 .stores {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 10px;
 }
 .store {
-  min-width: 210px;
-  min-height: 68px;
-  gap: 14px;
+  min-width: 176px;
 }
 .store--soon {
   cursor: default;
+  color: var(--muted);
+  border-color: var(--line);
 }
 .store--soon:hover {
-  --b: var(--line-strong);
-  --s: 10px;
-  color: var(--ink);
-}
-.store--soon:hover::after {
-  opacity: 0;
+  background: var(--card);
 }
 .store__icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   flex: none;
 }
-.store__text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.2;
-}
-.store__text strong {
-  font-size: 18px;
-  font-weight: 800;
-}
-.store__text small {
+.store__soon {
+  padding: 1px 6px;
+  border-radius: var(--r-tag);
+  background: var(--bg);
   font-size: 12px;
   font-weight: 600;
-  color: var(--faint);
+  color: var(--muted);
 }
 </style>

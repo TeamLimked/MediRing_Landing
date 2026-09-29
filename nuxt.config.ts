@@ -43,7 +43,9 @@ export default defineNuxtConfig({
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         { name: 'description', content: description },
-        { name: 'theme-color', content: '#03040C' },
+        { name: 'theme-color', content: '#F6F7F8', media: '(prefers-color-scheme: light)' },
+        { name: 'theme-color', content: '#111315', media: '(prefers-color-scheme: dark)' },
+        { name: 'color-scheme', content: 'light dark' },
         { property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: 'MediRing' },
         { property: 'og:title', content: title },
@@ -54,10 +56,12 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: `${baseURL}favicon.svg` },
         { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: '' },
-        // SUIT: 본문·헤드라인 공통(가변 폰트)
-        { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css' },
+        // Pretendard(SIL OFL 1.1) — 앱과 같은 서체, 한글 동적 서브셋
+        {
+          rel: 'stylesheet',
+          href: 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css',
+        },
       ],
-      script: [{ innerHTML: "document.documentElement.classList.add('js')", tagPosition: 'head' }],
     },
   },
 
@@ -65,9 +69,5 @@ export default defineNuxtConfig({
     prerender: {
       routes: ['/', '/support', ...['terms', 'privacy', 'sensitive', 'overseas', 'marketing', 'medical', 'affiliate'].map((d) => `/legal/${d}`)],
     },
-  },
-
-  vite: {
-    optimizeDeps: { include: ['three', 'gsap', 'gsap/ScrollTrigger', 'gsap/SplitText', 'lenis'] },
   },
 })

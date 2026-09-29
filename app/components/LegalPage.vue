@@ -77,98 +77,92 @@ watch(active, () => nextTick(revealActive))
   background: var(--bg);
 }
 .legal__band {
-  padding: calc(var(--header-h) + clamp(56px, 7vw, 110px)) 0 clamp(48px, 5vw, 80px);
+  padding: clamp(40px, 5vw, 64px) 0 clamp(28px, 3vw, 40px);
   border-bottom: 1px solid var(--line);
-  background:
-    radial-gradient(45% 120% at 85% 0%, rgba(58, 214, 212, 0.16), transparent 70%),
-    linear-gradient(rgba(236, 244, 255, 0.04) 1px, transparent 1px) 0 0 / 48px 48px,
-    linear-gradient(90deg, rgba(236, 244, 255, 0.04) 1px, transparent 1px) 0 0 / 48px 48px,
-    var(--bg);
+  background: var(--card);
 }
 .legal__crumb {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   font-size: 14px;
-  font-weight: 600;
-  color: var(--accent);
+  color: var(--faint);
 }
 .legal__crumb a {
   color: var(--muted);
 }
 .legal__crumb a:hover {
   color: var(--ink);
+  text-decoration: underline;
 }
 .legal__title {
-  margin-top: 18px;
-  font-size: clamp(32px, 4vw, 60px);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1.2;
+  margin-top: 10px;
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
 }
 .legal__date {
-  margin-top: 14px;
+  margin-top: 8px;
   font-size: 14px;
   color: var(--muted);
 }
 .legal__body {
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-columns: 200px minmax(0, 1fr);
   min-width: 0;
-  gap: clamp(28px, 4vw, 64px);
+  gap: clamp(24px, 3vw, 48px);
   align-items: start;
-  padding-top: clamp(40px, 5vw, 72px);
-  padding-bottom: clamp(96px, 10vw, 160px);
+  padding-top: clamp(28px, 3vw, 48px);
+  padding-bottom: clamp(72px, 8vw, 120px);
 }
 .legal__nav {
   position: sticky;
-  top: calc(var(--header-h) + 32px);
+  top: calc(var(--header-h) + 24px);
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--line-strong);
+  gap: 2px;
 }
 .legal__nav a {
-  padding: 14px 4px;
-  border-bottom: 1px solid var(--line);
+  padding: 8px 12px;
+  border-radius: var(--r-btn);
   font-size: 15px;
-  font-weight: 600;
   color: var(--muted);
-  transition: color 0.2s, padding 0.3s var(--ease);
 }
 .legal__nav a:hover {
   color: var(--ink);
-  padding-left: 10px;
+  background: var(--card);
 }
 .legal__nav a.active {
-  color: var(--accent);
-  font-weight: 800;
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+  font-weight: 700;
 }
 .legal__doc {
-  padding: clamp(24px, 4vw, 56px);
-  background: var(--panel);
-  box-shadow: inset 0 0 0 1px var(--line);
+  padding: clamp(20px, 3.4vw, 44px);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
 }
 .legal__draft {
-  margin-bottom: 32px;
-  padding: 14px 18px;
+  margin-bottom: 28px;
+  padding: 12px 16px;
+  border-radius: var(--r-btn);
   background: var(--warning-soft);
-  box-shadow: inset 0 0 0 1px rgba(245, 184, 78, 0.3);
-  color: #ffe2ae;
+  color: var(--ink);
   font-size: 14px;
-  font-weight: 600;
 }
 
 /* 본문(v-html) */
 .prose {
   font-size: 16px;
-  line-height: 1.85;
-  color: rgba(242, 246, 250, 0.88);
+  line-height: 1.8;
+  color: var(--ink);
 }
 .prose :deep(h2) {
-  margin: 48px 0 14px;
-  font-size: 21px;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  color: var(--ink);
+  margin: 40px 0 12px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 .prose :deep(h2:first-child) {
   margin-top: 0;
@@ -178,35 +172,32 @@ watch(active, () => nextTick(revealActive))
 .prose :deep(ul + p),
 .prose :deep(.table-wrap + p),
 .prose :deep(p + .table-wrap) {
-  margin-top: 14px;
+  margin-top: 12px;
 }
 .prose :deep(ul) {
   margin: 0;
   padding-left: 1.3em;
 }
 .prose :deep(li + li) {
-  margin-top: 6px;
-}
-.prose :deep(li::marker) {
-  color: var(--accent);
+  margin-top: 4px;
 }
 .prose :deep(a) {
-  color: var(--accent);
-  font-weight: 700;
+  color: var(--accent-strong);
+  font-weight: 600;
   text-decoration: underline;
-  text-underline-offset: 4px;
+  text-underline-offset: 3px;
 }
 .prose :deep(strong) {
-  font-weight: 800;
-  color: var(--ink);
+  font-weight: 700;
 }
 .prose :deep(.muted) {
-  color: var(--faint);
+  color: var(--muted);
   font-size: 14px;
 }
 .prose :deep(.table-wrap) {
   overflow-x: auto;
-  box-shadow: inset 0 0 0 1px var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r-btn);
 }
 .prose :deep(table) {
   width: 100%;
@@ -219,7 +210,7 @@ watch(active, () => nextTick(revealActive))
 }
 .prose :deep(th),
 .prose :deep(td) {
-  padding: 14px 16px;
+  padding: 12px 14px;
   text-align: left;
   vertical-align: top;
   border-bottom: 1px solid var(--line);
@@ -228,20 +219,15 @@ watch(active, () => nextTick(revealActive))
   border-bottom: 0;
 }
 .prose :deep(th) {
-  background: rgba(236, 244, 255, 0.04);
+  background: var(--bg);
   font-weight: 700;
-  color: var(--ink);
   white-space: nowrap;
-}
-.prose :deep(thead th) {
-  background: var(--accent-soft);
-  color: var(--accent);
 }
 
 @media (max-width: 900px) {
   .legal__body {
     grid-template-columns: minmax(0, 1fr);
-    gap: 20px;
+    gap: 16px;
   }
   .legal__nav {
     position: static;
@@ -252,22 +238,16 @@ watch(active, () => nextTick(revealActive))
     padding: 0 var(--gutter) 4px;
     overflow-x: auto;
     scrollbar-width: none;
-    border-top: 0;
   }
   .legal__nav a {
     flex: none;
-    padding: 9px 16px;
-    border: 0;
+    padding: 7px 14px;
+    border: 1px solid var(--line);
     font-size: 14px;
-    box-shadow: inset 0 0 0 1px var(--line);
-  }
-  .legal__nav a:hover {
-    padding-left: 16px;
+    background: var(--card);
   }
   .legal__nav a.active {
-    background: var(--accent);
-    color: #03121a;
-    box-shadow: none;
+    border-color: var(--accent-strong);
   }
   .prose :deep(th) {
     white-space: normal;

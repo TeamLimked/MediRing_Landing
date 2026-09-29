@@ -1,23 +1,26 @@
 <script setup lang="ts">
-// 링 + 새싹 잎 + 심박 점. 색은 테마 고정, 워드마크는 currentColor.
+// 앱 BrandMark(MediRing_APP src/components/brand-mark.tsx)와 같은 단색 로고: 링 + 새싹 잎 + 심박 점, 짙은 녹색 한 가지.
 defineProps<{ size?: number }>()
 const id = useId()
+const ring = 'M13.5 34a18.5 18.5 0 1 0 37 0a18.5 18.5 0 1 0 -37 0zM20.5 34a11.5 11.5 0 1 0 23 0a11.5 11.5 0 1 0 -23 0z'
+const leaf = 'M34 19c1-7 7-11 14-10-1 7-6 11-14 10z'
 </script>
 
 <template>
   <span class="logo">
-    <svg :width="size ?? 30" :height="size ?? 30" viewBox="0 0 40 40" aria-hidden="true">
+    <svg :width="size ?? 28" :height="size ?? 28" viewBox="4 2 56 56" aria-hidden="true" class="logo__mark">
       <defs>
-        <linearGradient :id="`${id}-g`" x1="4" y1="36" x2="36" y2="4" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#10B981" />
-          <stop offset="1" stop-color="#22B8CF" />
-        </linearGradient>
+        <mask :id="`${id}-knock`" maskUnits="userSpaceOnUse" x="-8" y="-8" width="80" height="80">
+          <rect x="-8" y="-8" width="80" height="80" fill="#fff" />
+          <circle cx="47" cy="34" r="5.3" fill="#000" />
+          <path :d="leaf" fill="none" stroke="#000" stroke-width="3.4" stroke-linejoin="round" />
+        </mask>
       </defs>
-      <circle cx="19" cy="22" r="11" fill="none" :stroke="`url(#${id}-g)`" stroke-width="5" />
-      <path d="M20.5 11c.7-5.2 5.1-8.2 10.3-7.5-.7 5.2-4.5 8.2-10.3 7.5z" fill="#34D9A0" />
-      <circle cx="30" cy="22" r="2.4" fill="#FF8A3D" />
+      <path :d="ring" fill="currentColor" fill-rule="evenodd" :mask="`url(#${id}-knock)`" />
+      <path :d="leaf" fill="currentColor" />
+      <circle cx="47" cy="34" r="3.2" fill="currentColor" />
     </svg>
-    <span class="logo__word">Medi<b>Ring</b></span>
+    <span class="logo__word">MediRing</span>
   </span>
 </template>
 
@@ -25,18 +28,15 @@ const id = useId()
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
+}
+.logo__mark {
+  color: var(--accent);
 }
 .logo__word {
-  font-size: 21px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-.logo__word b {
-  font-weight: 800;
-  background: linear-gradient(90deg, #10b981, #22b8cf);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 </style>

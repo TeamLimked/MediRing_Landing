@@ -1,40 +1,59 @@
-/* MediRing 랜딩 — 시네마틱 다크 톤(딥 네이비 + 시안). 포인트 색은 앱 팔레트(민트·아쿠아·탄제린)에서 가져옴 */
+/* MediRing 랜딩 — "차분한 헬스케어" 톤. 앱(MediRing_APP src/theme.ts)과 같은 토큰을 쓴다.
+   옅은 회색 바탕 + 흰 카드, 짙은 녹색 한 가지 포인트, Pretendard, 작은 모서리(카드 12·버튼 10·태그 4)·1px 선.
+   그림자·그라데이션·다색 장식·장식 애니메이션을 쓰지 않는다. 라이트/다크는 시스템 설정을 따른다. */
 :root {
-  --bg: #03040c;
-  --bg-2: #060918;
-  --panel: #0a0f22;
-  --panel-2: #10172f;
-  --line: rgba(236, 244, 255, 0.1);
-  --line-strong: rgba(236, 244, 255, 0.22);
-  --ink: #f2f6fa;
-  --muted: #a3acc0;
-  --faint: #6f7a92;
+  --bg: #f6f7f8;
+  --card: #ffffff;
+  --ink: #191e23;
+  --muted: #4d5560;
+  --faint: #626a75;
+  --line: #e3e6ea;
+  --border: #858e99;
+  --accent: #1e7558; /* 아이콘·선·그래프 */
+  --accent-strong: #135e46; /* 글자·버튼 채움 */
+  --accent-soft: #e9f2ee;
+  --on-accent: #ffffff;
+  --info: #3a6590;
+  --warning: #a86a12;
+  --warning-soft: #fbf3e6;
+  --warning-text: #8a5608; /* 흰 바탕 글자용(장식 --warning 은 4.5:1 미만) */
+  --critical: #c03a36;
+  --critical-strong: #a82f2b;
+  --critical-soft: #fbeceb;
+  --ok: #2c7a52;
 
-  --accent: #3ad6d4; /* 시안(주 포인트) — 앱 아쿠아와 민트 사이 */
-  --accent-deep: #1a9fb0;
-  --accent-soft: rgba(58, 214, 212, 0.12);
-  --mint: #34d9a0;
-  --aqua: #49d0e4;
-  --spark: #ff9f5a;
-  --critical: #ff6b7d;
-  --critical-soft: rgba(255, 107, 125, 0.14);
-  --warning: #f5b84e;
-  --warning-soft: rgba(245, 184, 78, 0.14);
-  --ok: #4bd57c;
-  --ok-soft: rgba(75, 213, 124, 0.14);
-
-  --font-sans: 'SUIT Variable', 'SUIT', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR',
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR',
     'Malgun Gothic', sans-serif;
 
-  --container: 1680px;
-  --gutter: clamp(20px, 2.6vw, 40px);
-  --section-y: clamp(96px, 12vw, 180px);
-  --header-h: 94px;
-  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --container: 1120px;
+  --gutter: clamp(20px, 4vw, 40px);
+  --section-y: clamp(72px, 9vw, 120px);
+  --header-h: 64px;
+  --r-card: 12px;
+  --r-btn: 10px;
+  --r-tag: 4px;
 }
-@media (max-width: 1024px) {
+@media (prefers-color-scheme: dark) {
   :root {
-    --header-h: 68px;
+    --bg: #111315;
+    --card: #1a1d20;
+    --ink: #e8ebee;
+    --muted: #a9b1ba;
+    --faint: #8f98a2;
+    --line: #2a2f34;
+    --border: #6f7883;
+    --accent: #5db592;
+    --accent-strong: #72c3a2;
+    --accent-soft: #17302a;
+    --on-accent: #0b1f18;
+    --info: #86aad2;
+    --warning: #d5a24b;
+    --warning-soft: #2b2416;
+    --warning-text: #d5a24b;
+    --critical: #e07a75;
+    --critical-strong: #e98c87;
+    --critical-soft: #2c1918;
+    --ok: #62bd8e;
   }
 }
 
@@ -45,20 +64,15 @@
 }
 
 html {
-  scroll-padding-top: var(--header-h);
+  scroll-padding-top: calc(var(--header-h) + 16px);
   -webkit-text-size-adjust: 100%;
   background: var(--bg);
+  color-scheme: light dark;
 }
-/* Lenis 가 켜지면 부드러운 스크롤은 Lenis 가 담당 */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -68,18 +82,15 @@ body {
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.65;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
   word-break: keep-all;
   overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
 }
 
 img,
-svg,
-canvas,
-video {
+svg {
   display: block;
   max-width: 100%;
 }
@@ -100,12 +111,13 @@ p {
   margin: 0;
 }
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-strong);
   outline-offset: 3px;
+  border-radius: 4px;
 }
 ::selection {
-  background: var(--accent);
-  color: #03121a;
+  background: var(--accent-soft);
+  color: var(--ink);
 }
 
 .sr-only {
@@ -125,11 +137,11 @@ p {
   left: 12px;
   z-index: 200;
   padding: 10px 16px;
-  background: var(--accent);
-  color: #03121a;
+  border-radius: var(--r-btn);
+  background: var(--accent-strong);
+  color: var(--on-accent);
   font-weight: 700;
   transform: translateY(-160%);
-  transition: transform 0.2s;
 }
 .skip-link:focus {
   transform: none;
@@ -143,166 +155,102 @@ p {
   padding: 0 var(--gutter);
 }
 .section {
-  position: relative;
   padding: var(--section-y) 0;
 }
+.section + .section {
+  border-top: 1px solid var(--line);
+}
+.section--card {
+  background: var(--card);
+}
 
-/* 작은 시안 점 + 라벨 (· Who we are) */
 .eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--accent);
+  color: var(--accent-strong);
 }
-.eyebrow::before {
-  content: '';
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-  box-shadow: 0 0 10px currentColor;
-}
-
-.display {
-  font-size: clamp(34px, 3.4vw, 60px);
-  font-weight: 800;
-  line-height: 1.3;
-  letter-spacing: -0.035em;
+.title {
+  margin-top: 8px;
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.025em;
 }
 .lead {
-  font-size: clamp(16px, 1.15vw, 19px);
-  line-height: 1.75;
+  margin-top: 14px;
+  max-width: 640px;
+  font-size: clamp(16px, 1.3vw, 18px);
+  line-height: 1.7;
   color: var(--muted);
 }
+.section-head {
+  margin-bottom: clamp(32px, 4vw, 48px);
+}
 
-/* 데스크톱에서만 쓰는 줄바꿈 */
 @media (max-width: 760px) {
   br.pc {
     display: none;
   }
 }
 
-/* ── 모서리 괄호 버튼 [ Learn more ] ─────────────────────── */
-@property --s {
-  syntax: '<length>';
-  inherits: true;
-  initial-value: 10px;
-}
-.bracket {
-  --b: var(--line-strong);
-  --s: 10px;
-  position: relative;
-  isolation: isolate;
+/* ── 버튼 ─────────────────────────────────────────────── */
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  min-width: 140px;
-  min-height: 58px;
-  padding: 0 28px;
-  border: 0;
-  background:
-    linear-gradient(var(--b), var(--b)) top left / var(--s) 1px no-repeat,
-    linear-gradient(var(--b), var(--b)) top left / 1px var(--s) no-repeat,
-    linear-gradient(var(--b), var(--b)) top right / var(--s) 1px no-repeat,
-    linear-gradient(var(--b), var(--b)) top right / 1px var(--s) no-repeat,
-    linear-gradient(var(--b), var(--b)) bottom left / var(--s) 1px no-repeat,
-    linear-gradient(var(--b), var(--b)) bottom left / 1px var(--s) no-repeat,
-    linear-gradient(var(--b), var(--b)) bottom right / var(--s) 1px no-repeat,
-    linear-gradient(var(--b), var(--b)) bottom right / 1px var(--s) no-repeat;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-btn);
+  background: var(--card);
   color: var(--ink);
   font-size: 16px;
   font-weight: 700;
-  white-space: nowrap;
-  transition: --s 0.35s var(--ease), color 0.3s;
+  line-height: 1.2;
+  transition: background-color 0.15s, border-color 0.15s;
 }
-.bracket::after {
-  content: '';
-  position: absolute;
-  inset: 6px;
-  z-index: -1;
+.btn:hover {
+  background: var(--bg);
+}
+.btn--primary {
+  border-color: var(--accent-strong);
+  background: var(--accent-strong);
+  color: var(--on-accent);
+}
+.btn--primary:hover {
   background: var(--accent);
-  opacity: 0;
-  transform: scale(0.92);
-  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+  border-color: var(--accent);
 }
-.bracket:hover {
-  --b: var(--accent);
-  --s: 16px;
-  color: #03121a;
-}
-.bracket:hover::after {
-  opacity: 1;
-  transform: none;
-}
-.bracket--accent {
-  --b: var(--accent);
-}
-.bracket--sm {
-  min-width: 0;
-  min-height: 46px;
-  padding: 0 20px;
+.btn--sm {
+  min-height: 40px;
+  padding: 0 14px;
   font-size: 15px;
 }
+.text-link {
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+.text-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
-/* 텍스트 링크 + 화살표 */
-.arrow-link {
+/* ── 카드·태그 ────────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+}
+.tag {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-.arrow-link svg {
-  flex: none;
-  transition: transform 0.3s var(--ease);
-}
-.arrow-link:hover svg {
-  transform: translateX(6px);
-}
-
-/* ── 스크롤 등장 ─────────────────────────────────────────── */
-/* html.js 는 head 인라인 스크립트가 붙인다 → JS 가 없으면 처음부터 보인다 */
-.js .reveal {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 1s var(--ease), transform 1s var(--ease);
-  transition-delay: var(--reveal-delay, 0ms);
-}
-.js .reveal.is-visible {
-  opacity: 1;
-  transform: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-  .js .reveal {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* v-split 대상: JS 가 분할하기 전에는 숨김(깜빡임 방지). 스크립트가 실패해도 2.5초 뒤에는 보이도록 */
-.js [data-split]:not(.split-ready) {
-  visibility: hidden;
-  animation: split-fallback 0s 2.5s forwards;
-}
-@keyframes split-fallback {
-  to {
-    visibility: visible;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .js [data-split]:not(.split-ready) {
-    visibility: visible;
-  }
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: var(--r-tag);
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
 }
