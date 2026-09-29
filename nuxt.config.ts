@@ -43,7 +43,7 @@ export default defineNuxtConfig({
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         { name: 'description', content: description },
-        { name: 'theme-color', content: '#07130F' },
+        { name: 'theme-color', content: '#03040C' },
         { property: 'og:type', content: 'website' },
         { property: 'og:site_name', content: 'MediRing' },
         { property: 'og:title', content: title },
@@ -54,14 +54,8 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: `${baseURL}favicon.svg` },
         { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: '' },
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        {
-          rel: 'stylesheet',
-          href: 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css',
-        },
-        // Jua: 앱과 같은 디스플레이 서체(큰 타이틀 전용)
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Jua&display=swap' },
+        // SUIT: 본문·헤드라인 공통(가변 폰트)
+        { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css' },
       ],
       script: [{ innerHTML: "document.documentElement.classList.add('js')", tagPosition: 'head' }],
     },
@@ -74,6 +68,6 @@ export default defineNuxtConfig({
   },
 
   vite: {
-    optimizeDeps: { include: ['three'] },
+    optimizeDeps: { include: ['three', 'gsap', 'gsap/ScrollTrigger', 'gsap/SplitText', 'lenis'] },
   },
 })
