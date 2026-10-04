@@ -8,6 +8,9 @@ const copy = computed(() => variants[props.variant])
 const links = useSiteLinks()
 const { public: pub } = useRuntimeConfig()
 const overseas = String(pub.waitlistStorage || 'google') === 'google'
+// 개인정보를 받는 사람이 드러나게 — 대표자(NUXT_PUBLIC_COMPANY_REPRESENTATIVE)가 있으면 함께 적는다(비어 있으면 자리표시자 대신 이름만)
+const representative = String(pub.company?.representative ?? '').trim()
+const operator = representative ? `${links.company.name}(대표 ${representative})` : links.company.name
 const waitlist = useWaitlist(props.variant)
 
 useHead(() => ({
@@ -142,7 +145,7 @@ async function submit() {
             <details class="try__details">
               <summary>자세히 보기</summary>
               <dl>
-                <template v-for="item in privacyItems(links.company.name)" :key="item.label">
+                <template v-for="item in privacyItems(operator)" :key="item.label">
                   <dt>{{ item.label }}</dt>
                   <dd>{{ item.value }}</dd>
                 </template>
@@ -179,7 +182,7 @@ async function submit() {
 
       <footer class="try__foot">
         <p>{{ disclaimer }}</p>
-        <p>운영: {{ links.company.name }} · 개인정보 문의 <a :href="`mailto:${links.company.privacyEmail}`">{{ links.company.privacyEmail }}</a></p>
+        <p>운영: {{ operator }} · 개인정보 문의 <a :href="`mailto:${links.company.privacyEmail}`">{{ links.company.privacyEmail }}</a></p>
       </footer>
     </div>
   </div>
