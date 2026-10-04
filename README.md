@@ -32,14 +32,16 @@ npm run typecheck
 | `/try/b` | 부모님 약통 정리 — "부모님 약통, 한 장으로 정리해 드려요"(약·영양제 함께 먹을 때 점검·진료용 한 장, 판매 없음) |
 
 - 사이트 머리·꼬리·3D 없이 가볍게(`definePageMeta({ bare: true })`), 검색 노출 안 함(`noindex`), 밝은 화면(앱 색)·어두운 모드 지원.
-- 기록: 방문(`view`)·버튼(`cta`)은 무작위 세션 id·변형·utm 만(쿠키 없음, 세션당 한 번), 신청(`signup`)은 이메일·누구의 약·가짓수·인터뷰 의향.
+- 기록: 방문(`view`)·버튼(`cta`)은 무작위 세션 id·변형·utm 만(쿠키 없음, 세션당 한 번), 신청(`signup`)은 이메일·누구의 약·가짓수·약사 점검 이용 의향·인터뷰 의향.
+  약사 점검(1회 29,000원, 출시 예정 — 지금은 결제하지 않는다고 적어 둔다)은 유료 의향을 재는 질문이다(백엔드 `docs/pharmacist-review.md`).
   같은 이메일은 첫 신청만 센다. 봇은 숨은 칸으로 거른다.
 - 동의: [필수] 개인정보 수집·이용, [필수] 국외 이전(Google 스프레드시트 — `WAITLIST_STORAGE=google` 일 때). 운영자 이름·문의 메일은 `NUXT_PUBLIC_COMPANY_*` 값.
 
 ### 신청 받는 곳 만들기(Google 스프레드시트 + Apps Script, 5분)
 1. 새 Google 스프레드시트 → 파일 > 설정 > 시간대 **(GMT+09:00) 서울**.
 2. 확장 프로그램 > Apps Script → `Code.gs` 내용을 [`scripts/waitlist-apps-script.gs`](scripts/waitlist-apps-script.gs) 로 바꿔 저장.
-3. 함수 `setup` 을 한 번 실행(권한 허용) → `events`·`signups`·`summary` 시트가 생긴다(`summary` 는 변형별 방문·신청·전환율 수식).
+3. 함수 `setup` 을 한 번 실행(권한 허용) → `events`·`signups`·`summary` 시트가 생긴다(`summary` 는 변형별 방문·신청·전환율·약사 점검 의향 수식).
+   예전에 `setup` 을 돌린 시트라면 `signups` 맨 뒤(K열)에 `약사 점검` 머리글을 넣고 `summary` 를 지운 뒤 `setup` 을 다시 돌린다.
 4. 배포 > 새 배포 > 유형 **웹 앱** — 실행: **나**, 액세스: **모든 사용자** → 배포 → 웹 앱 URL 복사(브라우저로 열면 `MediRing waitlist ok`).
 5. 저장소 Settings → Secrets and variables → Actions → **Variables** 에 `WAITLIST_ENDPOINT` = 웹 앱 URL → 다시 배포(Actions 의 Deploy 다시 실행).
 6. 확인: `/try/a` 를 열면 `events` 에 `view` 한 줄, 신청하면 `signups` 에 한 줄.

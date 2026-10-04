@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { countOptions, disclaimer, overseasItems, privacyItems, variants, whoOptions, type WaitlistVariant } from '~/data/waitlist'
+import { countOptions, disclaimer, overseasItems, pharmacistOffer, pharmacistOptions, privacyItems, variants, whoOptions, type WaitlistVariant } from '~/data/waitlist'
 
 // 메시지 테스트 페이지 — /try/a · /try/b 가 같은 화면에 문구만 바꿔 쓴다(사이트 머리·꼬리 없이 가볍게: three.js·GSAP 안 씀).
 const props = defineProps<{ variant: WaitlistVariant }>()
@@ -28,6 +28,7 @@ useHead(() => ({
 const email = ref('')
 const who = ref('')
 const count = ref('')
+const pharmacist = ref('')
 const interview = ref(false)
 const agreePrivacy = ref(false)
 const agreeOverseas = ref(false)
@@ -47,7 +48,7 @@ async function submit() {
     return
   }
   state.value = 'sending'
-  const ok = await waitlist.signup({ email: email.value, who: who.value, count: count.value, interview: interview.value })
+  const ok = await waitlist.signup({ email: email.value, who: who.value, count: count.value, pharmacist: pharmacist.value, interview: interview.value })
   state.value = ok ? 'done' : 'error'
   if (ok) {
     await nextTick()
@@ -127,6 +128,18 @@ async function submit() {
             <div class="try__options">
               <label v-for="option in countOptions" :key="option" class="try__option">
                 <input v-model="count" type="radio" name="count" :value="option" required />
+                <span>{{ option }}</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="try__fieldset">
+            <legend class="try__label">약사 점검 <span class="try__soon">출시 예정 · 1회 {{ pharmacistOffer.price }}</span></legend>
+            <p class="try__hint">{{ pharmacistOffer.text }} 지금은 결제하지 않아요.</p>
+            <p class="try__question">{{ pharmacistOffer.question }}</p>
+            <div class="try__options try__options--three">
+              <label v-for="option in pharmacistOptions" :key="option" class="try__option">
+                <input v-model="pharmacist" type="radio" name="pharmacist" :value="option" required />
                 <span>{{ option }}</span>
               </label>
             </div>
@@ -456,6 +469,28 @@ html.try-root body.try-body {
   border-radius: 12px;
   cursor: pointer;
 }
+.try__options--three {
+  grid-template-columns: 1fr; /* '가격에 따라'가 휴대폰 폭 3칸에는 들어가지 않는다 */
+}
+.try__soon {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 4px;
+  background: var(--t-accent-soft);
+  color: var(--t-accent);
+  font-size: 14px;
+  font-weight: 700;
+}
+.try__hint {
+  margin-top: 6px;
+  color: var(--t-muted);
+  font-size: 15px;
+}
+.try__question {
+  margin-top: 8px;
+  font-weight: 600;
+}
 .try__option:has(input:checked) {
   border-color: var(--t-accent);
   background: var(--t-accent-soft);
@@ -552,6 +587,9 @@ html.try-root body.try-body {
   }
   .try__options {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .try__options--three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 </style>

@@ -8,16 +8,19 @@ var EVENTS = ['view', 'cta', 'signup'];
 // 페이지(app/data/waitlist.ts)의 선택지와 같아야 한다
 var WHO = ['나', '부모님', '배우자·가족', '그 밖에'];
 var COUNT = ['1~3가지', '4~6가지', '7가지 이상', '잘 몰라요'];
+var PHARMACIST = ['이용할래요', '가격에 따라', '아니요']; // 약사 점검 1회(유료) 이용 의향
 var EMAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,24}$/;
 
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   sheet_(ss, 'events', ['시각', '이벤트', '변형', '세션', 'utm_source', 'utm_medium', 'utm_campaign']);
-  sheet_(ss, 'signups', ['시각', '변형', '이메일', '누구', '가짓수', '인터뷰', '세션', 'utm_source', 'utm_medium', 'utm_campaign']);
-  var summary = sheet_(ss, 'summary', ['변형', '방문(세션)', '버튼(세션)', '신청', '전환율(신청/방문)', '인터뷰 가능', '부모님 챙김', '7가지 이상']);
+  // 새 열은 맨 뒤에 붙인다(요약 수식의 열 위치가 바뀌지 않게)
+  sheet_(ss, 'signups', ['시각', '변형', '이메일', '누구', '가짓수', '인터뷰', '세션', 'utm_source', 'utm_medium', 'utm_campaign', '약사 점검']);
+  var summary = sheet_(ss, 'summary', ['변형', '방문(세션)', '버튼(세션)', '신청', '전환율(신청/방문)', '인터뷰 가능', '부모님 챙김', '7가지 이상',
+    '약사 점검 이용할래요', '약사 점검 가격에 따라']);
   VARIANTS.forEach(function (v, i) {
     var r = i + 2;
-    summary.getRange(r, 1, 1, 8).setValues([[
+    summary.getRange(r, 1, 1, 10).setValues([[
       v,
       '=IFERROR(COUNTUNIQUE(FILTER(events!D2:D, events!B2:B="view", events!C2:C="' + v + '")), 0)',
       '=IFERROR(COUNTUNIQUE(FILTER(events!D2:D, events!B2:B="cta", events!C2:C="' + v + '")), 0)',
@@ -26,6 +29,8 @@ function setup() {
       '=COUNTIFS(signups!B2:B, "' + v + '", signups!F2:F, TRUE)',
       '=COUNTIFS(signups!B2:B, "' + v + '", signups!D2:D, "부모님")',
       '=COUNTIFS(signups!B2:B, "' + v + '", signups!E2:E, "7가지 이상")',
+      '=COUNTIFS(signups!B2:B, "' + v + '", signups!K2:K, "이용할래요")',
+      '=COUNTIFS(signups!B2:B, "' + v + '", signups!K2:K, "가격에 따라")',
     ]]);
   });
   summary.getRange('E2:E3').setNumberFormat('0.0%');
@@ -61,11 +66,12 @@ function doPost(e) {
     var email = String(data.email || '').trim().toLowerCase();
     var who = String(data.who || '');
     var count = String(data.count || '');
-    if (!EMAIL.test(email) || WHO.indexOf(who) < 0 || COUNT.indexOf(count) < 0) return text_('bad');
+    var pharmacist = String(data.pharmacist || '');
+    if (!EMAIL.test(email) || WHO.indexOf(who) < 0 || COUNT.indexOf(count) < 0 || PHARMACIST.indexOf(pharmacist) < 0) return text_('bad');
     var signups = ss.getSheetByName('signups');
     // 같은 이메일을 두 번 넣으면 첫 신청만 센다(전환율이 부풀지 않게)
     if (signups.getRange('C:C').createTextFinder(email).matchEntireCell(true).findNext()) return text_('ok');
-    signups.appendRow(row.concat([variant, clip_(email, 254), who, count, data.interview === true, sid]).concat(utm));
+    signups.appendRow(row.concat([variant, clip_(email, 254), who, count, data.interview === true, sid]).concat(utm).concat([pharmacist]));
     return text_('ok');
   } finally {
     lock.releaseLock();

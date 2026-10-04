@@ -5,7 +5,7 @@ import type { WaitlistVariant } from '~/data/waitlist'
 // - Apps Script 는 CORS 응답 헤더를 주지 않으므로 no-cors(text/plain) 로 보내고 응답 본문은 읽지 않는다 — 네트워크 오류만 실패로 본다.
 // - 엔드포인트가 비어 있으면(로컬·미설정) 아무것도 보내지 않고, 페이지는 신청을 받지 않는다고 안내한다.
 
-export type SignupFields = { email: string; who: string; count: string; interview: boolean }
+export type SignupFields = { email: string; who: string; count: string; pharmacist: string; interview: boolean }
 
 const SID_KEY = 'mediring_try_sid'
 

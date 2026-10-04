@@ -66,13 +66,21 @@ export const variants: Record<WaitlistVariant, VariantCopy> = {
 export const whoOptions = ['나', '부모님', '배우자·가족', '그 밖에'] as const
 export const countOptions = ['1~3가지', '4~6가지', '7가지 이상', '잘 몰라요'] as const
 
+// 약사 점검 1회 — 유료 의향을 재는 질문(출시 전이라 결제하지 않는다고 분명히 적는다). 가격을 바꾸면 백엔드 docs/pharmacist-review.md 도 맞춘다
+export const pharmacistOffer = {
+  price: '29,000원',
+  text: '약사가 처방약·일반약·영양제 전체를 한 번 검토해, 함께 드실 때 주의할 점과 병원에 가져갈 의견서를 드리는 서비스예요.',
+  question: '이 서비스가 나오면 이용하시겠어요?',
+}
+export const pharmacistOptions = ['이용할래요', '가격에 따라', '아니요'] as const
+
 export const disclaimer = 'MediRing은 진단·처방을 대신하지 않아요. 드시던 약을 바꾸거나 끊기 전에는 꼭 의사·약사와 상의하세요.'
 
 // 개인정보 수집·이용 / 국외 이전 안내 — 보관처를 바꾸면(NUXT_PUBLIC_WAITLIST_STORAGE) 국외 이전 문구도 바꾼다
 export function privacyItems(operator: string): { label: string; value: string }[] {
   return [
     { label: '수집하는 곳', value: operator },
-    { label: '수집 항목', value: '이메일, 응답 내용(누구의 약을 챙기는지, 약·영양제 가짓수, 인터뷰 참여 의향)' },
+    { label: '수집 항목', value: '이메일, 응답 내용(누구의 약을 챙기는지, 약·영양제 가짓수, 약사 점검 이용 의향, 인터뷰 참여 의향)' },
     { label: '이용 목적', value: '출시 알림 1회 발송, 인터뷰 참여를 고른 경우 일정 연락' },
     { label: '보유 기간', value: '출시 알림을 보낸 뒤 바로 파기해요. 출시 전이라도 신청일로부터 1년이 지나면 파기해요.' },
     { label: '동의 거부', value: '동의하지 않을 수 있어요. 다만 그 경우 출시 알림을 받을 수 없어요.' },
