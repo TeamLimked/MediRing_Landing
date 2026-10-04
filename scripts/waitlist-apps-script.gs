@@ -1,0 +1,92 @@
+// MediRing 메시지 테스트(/try/a · /try/b) 사전 신청 수집 — Google Apps Script 웹 앱.
+// 설치는 README '메시지 테스트 페이지' 참고: 스프레드시트 > 확장 프로그램 > Apps Script 에 이 파일을 붙여 넣고
+// setup() 을 한 번 실행한 뒤 웹 앱(실행: 나, 액세스: 모든 사용자)으로 배포한다.
+// 시트: events(방문·버튼 — 개인정보 없음), signups(신청), summary(변형별 방문·신청·전환율 — 수식).
+
+var VARIANTS = ['a', 'b'];
+var EVENTS = ['view', 'cta', 'signup'];
+// 페이지(app/data/waitlist.ts)의 선택지와 같아야 한다
+var WHO = ['나', '부모님', '배우자·가족', '그 밖에'];
+var COUNT = ['1~3가지', '4~6가지', '7가지 이상', '잘 몰라요'];
+var EMAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,24}$/;
+
+function setup() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  sheet_(ss, 'events', ['시각', '이벤트', '변형', '세션', 'utm_source', 'utm_medium', 'utm_campaign']);
+  sheet_(ss, 'signups', ['시각', '변형', '이메일', '누구', '가짓수', '인터뷰', '세션', 'utm_source', 'utm_medium', 'utm_campaign']);
+  var summary = sheet_(ss, 'summary', ['변형', '방문(세션)', '버튼(세션)', '신청', '전환율(신청/방문)', '인터뷰 가능', '부모님 챙김', '7가지 이상']);
+  VARIANTS.forEach(function (v, i) {
+    var r = i + 2;
+    summary.getRange(r, 1, 1, 8).setValues([[
+      v,
+      '=IFERROR(COUNTUNIQUE(FILTER(events!D2:D, events!B2:B="view", events!C2:C="' + v + '")), 0)',
+      '=IFERROR(COUNTUNIQUE(FILTER(events!D2:D, events!B2:B="cta", events!C2:C="' + v + '")), 0)',
+      '=COUNTIF(signups!B2:B, "' + v + '")',
+      '=IFERROR(D' + r + '/B' + r + ', 0)',
+      '=COUNTIFS(signups!B2:B, "' + v + '", signups!F2:F, TRUE)',
+      '=COUNTIFS(signups!B2:B, "' + v + '", signups!D2:D, "부모님")',
+      '=COUNTIFS(signups!B2:B, "' + v + '", signups!E2:E, "7가지 이상")',
+    ]]);
+  });
+  summary.getRange('E2:E3').setNumberFormat('0.0%');
+}
+
+// 배포 확인용: 웹 앱 URL 을 브라우저로 열면 ok
+function doGet() {
+  return text_('MediRing waitlist ok');
+}
+
+function doPost(e) {
+  var data;
+  try {
+    data = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return text_('bad');
+  }
+  var event = String(data.event || '');
+  var variant = String(data.variant || '');
+  if (EVENTS.indexOf(event) < 0 || VARIANTS.indexOf(variant) < 0) return text_('bad');
+
+  var row = [new Date()];
+  var sid = clip_(data.sid, 64);
+  var utm = [clip_(data.utm_source, 64), clip_(data.utm_medium, 64), clip_(data.utm_campaign, 64)];
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (event !== 'signup') {
+      ss.getSheetByName('events').appendRow(row.concat([event, variant, sid]).concat(utm));
+      return text_('ok');
+    }
+    var email = String(data.email || '').trim().toLowerCase();
+    var who = String(data.who || '');
+    var count = String(data.count || '');
+    if (!EMAIL.test(email) || WHO.indexOf(who) < 0 || COUNT.indexOf(count) < 0) return text_('bad');
+    var signups = ss.getSheetByName('signups');
+    // 같은 이메일을 두 번 넣으면 첫 신청만 센다(전환율이 부풀지 않게)
+    if (signups.getRange('C:C').createTextFinder(email).matchEntireCell(true).findNext()) return text_('ok');
+    signups.appendRow(row.concat([variant, clip_(email, 254), who, count, data.interview === true, sid]).concat(utm));
+    return text_('ok');
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function sheet_(ss, name, header) {
+  var sheet = ss.getSheetByName(name) || ss.insertSheet(name);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(header);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+// 길이 제한 + 수식 주입 방지(=, +, -, @ 로 시작하면 글자로 저장)
+function clip_(value, max) {
+  var s = String(value == null ? '' : value).slice(0, max);
+  return /^[=+\-@]/.test(s) ? "'" + s : s;
+}
+
+function text_(s) {
+  return ContentService.createTextOutput(s).setMimeType(ContentService.MimeType.TEXT);
+}
