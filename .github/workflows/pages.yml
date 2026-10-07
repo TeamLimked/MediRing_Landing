@@ -51,6 +51,9 @@ jobs:
           NUXT_PUBLIC_COMPANY_SUPPORT_EMAIL: ${{ vars.SUPPORT_EMAIL }}
           NUXT_PUBLIC_COMPANY_POLICY_VERSION: ${{ vars.POLICY_VERSION }}
           NUXT_PUBLIC_COMPANY_LEGAL_DRAFT: ${{ vars.LEGAL_DRAFT_BANNER || 'true' }}
+          # 메시지 테스트(/try/a·/try/b) 사전 신청 — Apps Script 웹 앱 URL(비우면 신청을 받지 않음), 보관처(google|domestic)
+          NUXT_PUBLIC_WAITLIST_ENDPOINT: ${{ vars.WAITLIST_ENDPOINT }}
+          NUXT_PUBLIC_WAITLIST_STORAGE: ${{ vars.WAITLIST_STORAGE || 'google' }}
 
       - run: touch .output/public/.nojekyll
 

@@ -33,6 +33,10 @@ export default defineNuxtConfig({
         // 법무 확정 후 false(NUXT_PUBLIC_COMPANY_LEGAL_DRAFT=false) — 백엔드 LEGAL_DRAFT_BANNER 와 함께 바꾼다
         legalDraft: true,
       },
+      // 메시지 테스트(/try/a·/try/b) 사전 신청을 받는 곳 — Google Apps Script 웹 앱 URL(scripts/waitlist-apps-script.gs). 비우면 신청을 받지 않는다
+      waitlistEndpoint: '',
+      // 신청 내용 보관처: google(Google 스프레드시트 — 국외 이전 동의를 함께 받는다) | domestic(국내 보관 — 국외 이전 동의 없음)
+      waitlistStorage: 'google',
     },
   },
 
@@ -63,7 +67,7 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      routes: ['/', '/support', ...['terms', 'privacy', 'sensitive', 'overseas', 'marketing', 'medical', 'affiliate'].map((d) => `/legal/${d}`)],
+      routes: ['/', '/support', '/try/a', '/try/b', ...['terms', 'privacy', 'sensitive', 'overseas', 'marketing', 'medical', 'affiliate'].map((d) => `/legal/${d}`)],
     },
   },
 
