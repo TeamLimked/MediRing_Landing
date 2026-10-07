@@ -81,25 +81,18 @@ defineProps<{ kind: FeatureKind }>()
       </div>
     </div>
 
-    <!-- 루틴 정원 -->
-    <div v-else class="fv__split fv__split--garden">
-      <svg class="plant" viewBox="0 0 200 220">
-        <g>
-          <circle v-for="k in 6" :key="k" cx="100" cy="44" r="13" fill="#ff9fc0" :transform="`rotate(${k * 60} 100 62)`" />
-          <circle cx="100" cy="62" r="11" fill="#f7b801" />
-        </g>
-        <path d="M100 172V70" stroke="#34d9a0" stroke-width="6" stroke-linecap="round" />
-        <path d="M100 118c-4-18-22-26-40-22 4 18 22 26 40 22z" fill="#12c4b0" />
-        <path d="M100 104c4-18 22-26 40-22-4 18-22 26-40 22z" fill="#34d9a0" />
-        <path d="M100 140c-2-14-16-22-32-18 3 14 16 21 32 18z" fill="#10b981" />
-        <path d="M100 140c2-14 16-22 32-18-3 14-16 21-32 18z" fill="#34d9a0" />
-        <path d="M58 170h84l-9 44H67z" fill="#ff8a3d" />
-        <rect x="52" y="162" width="96" height="14" rx="7" fill="#ff9f5a" />
-      </svg>
-      <div class="xp">
-        <p class="xp__stage">활짝</p>
-        <div class="xp__bar"><span /></div>
-        <p class="xp__text">함께 만든 작은 정원이 완성됐어요.</p>
+    <!-- 복용 알림·위젯 — 잠금 화면에는 약 이름 없이 개수·시각만(앱과 같은 원칙) -->
+    <div v-else class="fv__split fv__split--reminder">
+      <div class="notice">
+        <p class="notice__app">MediRing · 지금</p>
+        <p class="notice__title">오전 복용 시각이에요</p>
+        <p class="notice__body">챙길 약·영양제 2개</p>
+        <div class="notice__actions"><span>복용 완료</span><span>10분 뒤 알림</span></div>
+      </div>
+      <div class="notice notice--widget">
+        <p class="notice__app">다음 복용</p>
+        <p class="notice__time">오후 8:00</p>
+        <p class="notice__body">오늘 2/3 완료</p>
       </div>
     </div>
   </div>
@@ -126,7 +119,7 @@ defineProps<{ kind: FeatureKind }>()
   -webkit-mask-image: radial-gradient(90% 90% at 50% 50%, #000 40%, transparent 100%);
 }
 .fv--conditions .fv__bg,
-.fv--garden .fv__bg {
+.fv--reminder .fv__bg {
   background:
     radial-gradient(45% 60% at 30% 60%, rgba(255, 159, 90, 0.16), transparent 70%),
     radial-gradient(45% 60% at 75% 40%, rgba(58, 214, 212, 0.18), transparent 70%),
@@ -418,36 +411,53 @@ defineProps<{ kind: FeatureKind }>()
   color: var(--muted);
 }
 
-.fv__split--garden {
-  justify-content: center;
+.fv__split--reminder {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  width: min(460px, 78%);
 }
-.plant {
-  width: clamp(140px, 16vw, 220px);
-  filter: drop-shadow(0 20px 40px rgba(58, 214, 212, 0.25));
+.notice {
+  padding: 16px 18px;
+  background: rgba(16, 23, 47, 0.85);
+  box-shadow: inset 0 0 0 1px var(--line);
 }
-.xp {
-  width: min(240px, 45%);
+.notice__app {
+  margin: 0;
+  font-size: 12px;
+  color: var(--faint);
 }
-.xp__stage {
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--mint);
+.notice__title {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: 700;
 }
-.xp__bar {
-  height: 6px;
-  margin: 12px 0 14px;
-  background: rgba(236, 244, 255, 0.1);
-}
-.xp__bar span {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, var(--mint), var(--accent));
-  box-shadow: 0 0 12px var(--accent);
-}
-.xp__text {
-  font-size: 14px;
+.notice__body {
+  margin: 2px 0 0;
+  font-size: 13px;
   color: var(--muted);
+}
+.notice__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.notice__actions span {
+  padding: 6px 12px;
+  background: rgba(58, 214, 212, 0.12);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.notice--widget {
+  align-self: flex-end;
+  width: min(220px, 60%);
+}
+.notice__time {
+  margin: 2px 0 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--accent);
 }
 
 @media (max-width: 960px) {
