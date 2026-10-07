@@ -63,12 +63,17 @@ export const variants: Record<WaitlistVariant, VariantCopy> = {
 }
 
 // 폼 선택지 — 시트에 그대로 남는 값이라 한국어 그대로 보낸다
-export const whoOptions = ['나', '부모님', '배우자·가족', '그 밖에'] as const
+// '일로 챙겨요'는 기관·약국·요양 담당자 — 구매자 인터뷰(백엔드 validation-plan.md H5) 후보를 함께 모은다
+export const whoOptions = ['나', '부모님', '배우자·가족', '일로 챙겨요(기관·약국·요양)', '그 밖에'] as const
 export const countOptions = ['1~3가지', '4~6가지', '7가지 이상', '잘 몰라요'] as const
 
-// 약사 점검 1회 — 유료 의향을 재는 질문(출시 전이라 결제하지 않는다고 분명히 적는다). 가격을 바꾸면 백엔드 docs/pharmacist-review.md 도 맞춘다
+// 약사 점검 1회 — 유료 의향을 재는 질문(출시 전이라 결제하지 않는다고 분명히 적는다).
+// 가격은 방문자마다 둘 중 하나를 고정으로 보여 준다(다시 와도 같은 가격 — useWaitlist). 시트 summary 의 가격별 표로 '이용할래요' 비율을 비교한다.
+// 가격을 바꾸면 scripts/waitlist-apps-script.gs 의 PRICES 와 백엔드 docs/pharmacist-review.md·validation-plan.md 도 맞춘다
+export const pharmacistPrices = ['29,000원', '39,000원'] as const
+export type PharmacistPrice = (typeof pharmacistPrices)[number]
+
 export const pharmacistOffer = {
-  price: '29,000원',
   text: '약사가 처방약·일반약·영양제 전체를 한 번 검토해, 함께 드실 때 주의할 점과 병원에 가져갈 의견서를 드리는 서비스예요.',
   question: '이 서비스가 나오면 이용하시겠어요?',
 }

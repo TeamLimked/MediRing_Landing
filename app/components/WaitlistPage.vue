@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { countOptions, disclaimer, overseasItems, pharmacistOffer, pharmacistOptions, privacyItems, variants, whoOptions, type WaitlistVariant } from '~/data/waitlist'
+import { countOptions, disclaimer, overseasItems, pharmacistOffer, pharmacistOptions, privacyItems, variants, whoOptions, type PharmacistPrice, type WaitlistVariant } from '~/data/waitlist'
 
 // 메시지 테스트 페이지 — /try/a · /try/b 가 같은 화면에 문구만 바꿔 쓴다(사이트 머리·꼬리 없이 가볍게: three.js·GSAP 안 씀).
 const props = defineProps<{ variant: WaitlistVariant }>()
@@ -29,6 +29,7 @@ const email = ref('')
 const who = ref('')
 const count = ref('')
 const pharmacist = ref('')
+const price = ref<PharmacistPrice | ''>('') // 방문자마다 고정된 약사 점검 가격 — 하이드레이션 뒤에 정한다
 const interview = ref(false)
 const agreePrivacy = ref(false)
 const agreeOverseas = ref(false)
@@ -38,6 +39,7 @@ const doneRef = ref<HTMLElement | null>(null)
 
 // 하이드레이션이 끝난 뒤에 센다 — 그 사이 라우터가 잠깐 주소에서 쿼리를 뺐다 되돌려(replaceState) onMounted 에서는 utm 이 빠졌다
 onNuxtReady(() => {
+  price.value = waitlist.price() // 방문 기록에도 가격이 함께 남게 먼저 정한다
   void waitlist.trackView()
 })
 
@@ -134,7 +136,7 @@ async function submit() {
           </fieldset>
 
           <fieldset class="try__fieldset">
-            <legend class="try__label">약사 점검 <span class="try__soon">출시 예정 · 1회 {{ pharmacistOffer.price }}</span></legend>
+            <legend class="try__label">약사 점검 <span class="try__soon">출시 예정<template v-if="price"> · 1회 {{ price }}</template></span></legend>
             <p class="try__hint">{{ pharmacistOffer.text }} 지금은 결제하지 않아요.</p>
             <p class="try__question">{{ pharmacistOffer.question }}</p>
             <div class="try__options try__options--three">
