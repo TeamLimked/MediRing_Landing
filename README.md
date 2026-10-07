@@ -33,7 +33,9 @@ npm run typecheck
 
 - 사이트 머리·꼬리·3D 없이 가볍게(`definePageMeta({ bare: true })`), 검색 노출 안 함(`noindex`), 밝은 화면(앱 색)·어두운 모드 지원.
 - 기록: 방문(`view`)·버튼(`cta`)은 무작위 세션 id·변형·utm 만(쿠키 없음, 세션당 한 번), 신청(`signup`)은 이메일·누구의 약·가짓수·약사 점검 이용 의향·인터뷰 의향.
-  약사 점검(1회 29,000원, 출시 예정 — 지금은 결제하지 않는다고 적어 둔다)은 유료 의향을 재는 질문이다(백엔드 `docs/pharmacist-review.md`).
+  약사 점검(출시 예정 — 지금은 결제하지 않는다고 적어 둔다)은 유료 의향을 재는 질문이다(백엔드 `docs/pharmacist-review.md`).
+  가격은 **방문자마다 29,000원·39,000원 중 하나를 고정**으로 보여 주고(브라우저 저장소 — 못 쓰면 그 방문만 무작위), 방문·버튼·신청 기록에 가격을 함께 남긴다.
+  '누구의 약·영양제' 선택지의 **일로 챙겨요(기관·약국·요양)** 는 구매자 인터뷰(H5) 후보다.
   같은 이메일은 첫 신청만 센다. 봇은 숨은 칸으로 거른다.
 - 동의: [필수] 개인정보 수집·이용, [필수] 국외 이전(Google 스프레드시트 — `WAITLIST_STORAGE=google` 일 때). 운영자 이름·문의 메일은 `NUXT_PUBLIC_COMPANY_*` 값.
 
@@ -41,7 +43,7 @@ npm run typecheck
 1. 새 Google 스프레드시트 → 파일 > 설정 > 시간대 **(GMT+09:00) 서울**.
 2. 확장 프로그램 > Apps Script → `Code.gs` 내용을 [`scripts/waitlist-apps-script.gs`](scripts/waitlist-apps-script.gs) 로 바꿔 저장.
 3. 함수 `setup` 을 한 번 실행(권한 허용) → `events`·`signups`·`summary` 시트가 생긴다(`summary` 는 변형별 방문·신청·전환율·약사 점검 의향 수식).
-   예전에 `setup` 을 돌린 시트라면 `signups` 맨 뒤(K열)에 `약사 점검` 머리글을 넣고 `summary` 를 지운 뒤 `setup` 을 다시 돌린다.
+   예전에 `setup` 을 돌린 시트라면 `events` 맨 뒤(H열)에 `가격`, `signups` 맨 뒤(K·L열)에 `약사 점검`·`약사 점검 가격` 머리글을 넣고 `summary` 를 지운 뒤 `setup` 을 다시 돌린다.
 4. 배포 > 새 배포 > 유형 **웹 앱** — 실행: **나**, 액세스: **모든 사용자** → 배포 → 웹 앱 URL 복사(브라우저로 열면 `MediRing waitlist ok`).
 5. 저장소 Settings → Secrets and variables → Actions → **Variables** 에 `WAITLIST_ENDPOINT` = 웹 앱 URL → 다시 배포(Actions 의 Deploy 다시 실행).
 6. 확인: `/try/a` 를 열면 `events` 에 `view` 한 줄, 신청하면 `signups` 에 한 줄.
@@ -51,6 +53,7 @@ npm run typecheck
 ### 실험 운영
 - 링크는 `?utm_source=…&utm_medium=…&utm_campaign=…` 를 붙여 채널별로 나눈다(예: `/try/b?utm_source=meta&utm_campaign=parents-1`).
 - 같은 채널·같은 기간·같은 예산으로 두 링크를 나눠 보낸다. 판단 기준과 일정은 백엔드 `docs/validation-plan.md`.
+- 약사 점검 가격: `summary` 아래 가격별 표의 '이용할래요 비율'을 본다. 39,000원은 1건에 남는 돈이 29,000원의 약 두 배라, 39,000원 비율이 29,000원의 절반 이상이면 39,000원이 같거나 더 많이 남긴다. 가격마다 신청이 30명이 안 되면 결론 내지 않는다.
 
 ## GitHub Pages 배포
 `main` 에 푸시하면 `.github/workflows/pages.yml` 이 정적 생성 후 Pages 로 배포한다 → https://teamlimked.github.io/MediRing_Landing/
