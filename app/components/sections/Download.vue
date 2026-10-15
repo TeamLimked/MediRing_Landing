@@ -7,7 +7,7 @@
     <div class="container dl__inner">
       <p class="eyebrow">Get started</p>
       <h2 id="dl-title" class="display dl__title" v-split data-split>메디링과 함께<br />오늘의 영양을 시작하세요.</h2>
-      <p class="lead dl__lead">3분이면 첫 추천을 받아볼 수 있어요. 가입과 핵심 기능은 무료예요.</p>
+      <p class="lead dl__lead">3분이면 첫 추천을 받아볼 수 있어요. 지금은 모든 기능이 무료예요.</p>
       <StoreButtons class="dl__stores" />
       <p class="dl__note">만 19세 이상 성인 대상 · 의료 진단·치료를 대체하지 않습니다</p>
     </div>
